@@ -5,7 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "build": "tsc -w",
-    "dev": "npm run build & nodemon dist/index.js",
+    "dev": "nodemon dist/index.js",
     "prestart": "tsc",
     "start": "node dist/index.js"
   },

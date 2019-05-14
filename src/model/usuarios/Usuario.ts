@@ -6,7 +6,15 @@ export interface IUserModel extends mongoose.Document {
   nome: string;
   email: string;
   senha: string;
-  authenticate: () => {};
+}
+
+export interface IUserLoginModel extends mongoose.Document {
+  nome?: string;
+  email: string;
+  senha: string;
+  authenticate: (usuario?: string, senha?: string) => Promise<
+    IUserAuthenticationResponse
+  >;
 }
 
 export interface IUserInfo {
@@ -19,9 +27,10 @@ export interface IUserAuthenticationResponse {
   userInfo: IUserInfo;
 }
 
-export const USER_MODEL_NAME = "Usuario";
+export const USER_MODEL_NAME = "usuarios";
+export const USER_MODEL_LOGIN_NAME = "UsuarioLogin";
 
-const userSchema = new mongoose.Schema({
+const userCRUDSchema = new mongoose.Schema({
   nome: {
     type: String,
     required: [true, "O nome de usuário é obrigatório!"],
@@ -39,36 +48,60 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-userSchema.methods.authenticate = async (): Promise<
+const userLoginSchema = new mongoose.Schema({
+  nome: {
+    type: String,
+    maxlength: [40, "O nome deve ter no máximo 40 caracteres"]
+  },
+  email: {
+    type: String,
+    required: [true, "O e-mail é obrigatório!"],
+    maxlength: [40, "O email deve ter no máximo 40 caracteres"]
+  },
+  senha: {
+    type: String,
+    required: [true, "A senha é obrigatória!"],
+    maxlength: [40, "A senha deve ter no máximo 40 caracteres"]
+  }
+});
+
+userLoginSchema.methods.authenticate = async (email?: string, senha?: string): Promise<
   IUserAuthenticationResponse
 > => {
-  const model = this as IUserModel;
-  const { senha, ...propsSemSenha } = model;
-  const { email } = propsSemSenha;
+  try {
+    const user = await UserCRUDModel
+      .findOne({ email, senha } as IUserModel);
 
-  const user = await model
-    .model(USER_MODEL_NAME)
-    .findOne({ email, senha } as IUserModel);
+    if (!user) {
+      return null;
+    }
 
-  if (!user) {
-    return null;
+
+    const token = jwt.sign(
+      {
+        email: user.email,
+        nome: user.nome,
+        _id: user._id,
+        generatedDate: new Date(),
+        exp: new Date().getSeconds()
+      },
+      secret
+    );
+
+    return { token, userInfo: { email: user.email, nome: user.nome } } as IUserAuthenticationResponse;
+  } catch (error) {
+    throw error
   }
-
-  const token = jwt.sign(
-    {
-      email: user.email,
-      nome: user.nome,
-      _id: user._id,
-      generatedDate: new Date(),
-      exp: new Date()
-    },
-    secret
-  );
-
-  return { token, userInfo: { email: user.email, nome: user.nome } };
 };
 
-export const UserModel = mongoose.model<IUserModel>(
+export const UserCRUDModel = mongoose.model<IUserModel>(
   USER_MODEL_NAME,
-  userSchema
+  userCRUDSchema,
+  USER_MODEL_NAME
+);
+
+export const UserLoginModel = mongoose.model<IUserLoginModel>(
+  USER_MODEL_LOGIN_NAME,
+  userLoginSchema,
+  USER_MODEL_NAME
 );
