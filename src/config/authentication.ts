@@ -1,18 +1,34 @@
 import { Strategy } from "passport-http-bearer";
 import * as passport from "passport";
-import { UserCRUDModel } from "../model/usuarios/Usuario";
+import { UserCRUDModel, IUserLoginModel } from "../model/usuarios/Usuario";
+import * as jwt from "jsonwebtoken";
+import {secret} from './authentication.config.json'
 
 export default class AuthConfig {
   static config() {
     passport.use(
       new Strategy(async (token, cb) => {
-        let user = await UserCRUDModel.findOne({ token });
+        try {
+          console.log("Entrou na autenticação")
+        let decoded = jwt.verify(token, secret) as IUserLoginModel
+
+        if(!decoded){
+          return cb(null, false);
+        }
+        
+        let user = await UserCRUDModel
+          .findOne({ email: decoded.email } as IUserLoginModel);
 
         if (user) {
-          return cb(null, user);
+          let {senha, ...response} = user
+          return cb(null, response);
         }
 
         return cb(null, false);
+        } catch (error) {
+          console.log(error)
+          return cb(null, false);
+        }
       })
     );
   }

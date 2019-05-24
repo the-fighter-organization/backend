@@ -76,16 +76,17 @@ userLoginSchema.methods.authenticate = async (email?: string, senha?: string): P
       return null;
     }
 
-
     const token = jwt.sign(
       {
         email: user.email,
         nome: user.nome,
         _id: user._id,
-        generatedDate: new Date(),
-        exp: new Date().getSeconds()
+        generatedDate: new Date()
       },
-      secret
+      secret,
+      {
+        expiresIn : '2h'
+      }
     );
 
     return { token, userInfo: { email: user.email, nome: user.nome } } as IUserAuthenticationResponse;
