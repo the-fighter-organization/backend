@@ -15,14 +15,14 @@ export default class UsuarioService implements IReadOnlyService, IEditService {
     }
 
     model.senha = CryptoJS.HmacSHA1(model.senha, passwordHash).toString()
+
     try {
-      let obj: IUserModel = null;
-      if (model._id) {
-        obj = await model.save();
+      if (!model._id) {
+        model = await model.save();
       } else {
-        obj = await UserCRUDModel.findByIdAndUpdate(model._id, {...model})
+        model = await UserCRUDModel.findOneAndUpdate({_id:model._id}, model)
       }
-      return res.status(200).json(obj);
+      return res.status(200).json(model);
     } catch (error) {
       return res.status(500).json({ error });
     }
@@ -46,7 +46,6 @@ export default class UsuarioService implements IReadOnlyService, IEditService {
 
       return res.status(200).json(response);
     } catch (error) {
-      console.log(error)
       return res.status(500).json(error)
     }
   }
@@ -56,7 +55,7 @@ export default class UsuarioService implements IReadOnlyService, IEditService {
       return res.status(400);
     }
     try {
-      let q = await UserCRUDModel.findByIdAndRemove(req.params.id);
+      let q = await UserCRUDModel.findOneAndRemove({_id : req.params.id});
       return res.status(200).json(q);
     } catch (error) {
       return res.status(500).json({ error });
@@ -74,7 +73,7 @@ export default class UsuarioService implements IReadOnlyService, IEditService {
 
   async findOne(req: express.Request, res: express.Response) {
     try {
-      let result = await UserCRUDModel.findById(req.params.id)
+      let result = await UserCRUDModel.findOne({_id : req.params.id})
 
       if (result) {
         return res.status(200).json(result)
