@@ -2,6 +2,7 @@ import IReadOnlyService from "./types/IReadOnlyService";
 import IEditService from "./types/IEditService";
 import * as express from "express";
 import { PaiAlunoCRUDModel } from "../model/paisAlunos/PaiAluno";
+import { UserCRUDModel } from "../model/usuarios/Usuario";
 
 export default class PaiAlunoService implements IReadOnlyService, IEditService {
   async save(req: express.Request, res: express.Response) {
