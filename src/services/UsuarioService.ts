@@ -1,7 +1,7 @@
 import IReadOnlyService from "./types/IReadOnlyService";
 import IEditService from "./types/IEditService";
 import * as express from "express";
-import { UserCRUDModel as UserCRUDModel, UserLoginModel, IUserModel } from '../model/usuarios/Usuario';
+import { UserCRUDModel as UserCRUDModel, UserLoginModel } from '../model/usuarios/Usuario';
 const CryptoJS = require("crypto-js");
 import {passwordHash} from '../config/authentication.config.json'
 
@@ -15,11 +15,13 @@ export default class UsuarioService implements IReadOnlyService, IEditService {
     }
 
     model.senha = CryptoJS.HmacSHA1(model.senha, passwordHash).toString()
-
+    console.log(model._id)
     try {
       if (!model._id) {
+        console.log("Inserindo")
         model = await model.save();
       } else {
+        console.log("Alterando")
         model = await UserCRUDModel.findOneAndUpdate({_id:model._id}, model)
       }
       return res.status(200).json(model);

@@ -9,7 +9,6 @@ export default class AuthConfig {
     passport.use(
       new Strategy(async (token, cb) => {
         try {
-          console.log("Entrou na autenticação")
         let decoded = jwt.verify(token, secret) as IUserLoginModel
 
         if(!decoded){
