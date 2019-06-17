@@ -1,6 +1,5 @@
 import * as mongoose from "mongoose";
-import { IPaiAlunoModel } from "../paisAlunos/PaiAluno";
-import { IUserModel } from "../usuarios/Usuario";
+import { IUserModel, USER_MODEL_NAME } from "../usuarios/Usuario";
 
 export interface IAlunoModel extends mongoose.Document {
   nome: string;
@@ -17,23 +16,81 @@ export interface IAlunoModel extends mongoose.Document {
   usuario: mongoose.Schema.Types.ObjectId
 }
 
+export interface IEndereco{
+  numero:string;
+  rua:string;
+  bairro:string;
+  cidade:string;
+  uf:string;
+}
+
+export interface IResponsavel{
+  nome:string;
+  cpf:string;
+  endereco:IEndereco;
+  telefone:string;
+}
+
 export interface IAlunoResponse {
   _id: mongoose.Schema.Types.ObjectId;
   nome: string;
   dataNascimento: Date;
-  enderecos: [{
-    rua:string,
-    numero:string,
-    bairro:string,
-    cidade:string,
-    uf:string
-  }],
+  endereco: IEndereco,
   inativo:boolean;
-  responsavel:IPaiAlunoModel;
+  responsavel:IResponsavel;
   usuario: IUserModel
 }
 
 export const ALUNO_MODEL_NAME = "alunos";
+// Endereços
+const enderecoSchema = new mongoose.Schema({
+  rua: {
+    type: String,
+    required: [true, "A rua é obrigatória!"],
+    maxlength: [50, "A rua deve ter no máximo 40 caracteres!"]
+  },
+  numero: {
+    type: String,
+    required: [true, "O número é obrigatório!"],
+    maxlength: [12, "O número deve ter no máximo 12 caracteres!"]
+  },
+  bairro: {
+    type: String,
+    required: [true, "O bairro é obrigatório!"],
+    maxlength: [40, "O bairro deve ter no máximo 40 caracteres!"]
+  },
+  cidade: {
+    type: String,
+    required: [true, "A cidade é obrigatória!"],
+    maxlength: [60, "A cidade deve ter no máximo 60 caracteres!"]
+  },
+  uf: {
+    type: String,
+    required: [true, "A UF é obrigatória!"],
+    maxlength: [2, "A UF deve ter no máximo 2 caracteres!"]
+  }
+});
+
+// Responsável
+const responsavelSchema = new mongoose.Schema({
+  nome: {
+    type: String,
+    required: [true, "O nome do responsável é obrigatório!"],
+    maxlength: [40, "O nome do responsável ter no máximo 40 caracteres"]
+  },
+  cpf: {
+    type: String,
+    required: [true, "O CPF é obrigatório!"],
+    minlength: [11, "O CPF deve ter 11 caracteres"],
+    maxlength: [11, "O CPF deve ter 11 caracteres"]
+  },
+  endereco: enderecoSchema,
+  telefone: {
+    type:String,
+    required:[true, "O telefone é obrigatório"],
+    maxlength: [15, "O telefone deve ter no máximo 15 caracteres!"]
+  }
+});
 
 const alunoCRUDSchema = new mongoose.Schema({
   nome: {
@@ -45,23 +102,24 @@ const alunoCRUDSchema = new mongoose.Schema({
     type: Date,
     required: [true, "A data de nascimento é obrigatória!"]
   },
-  enderecos: [{
-    rua: String,
-    numero: String,
-    bairro: String,
-    cidade: String,
-    uf: String
-  }],
+  endereco: enderecoSchema,
   inativo: {
     type: Boolean
   },
-  responsavel:{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'paisAlunos'
+  responsavel:responsavelSchema,
+  dataRegistro:{
+    type:Date,
+    default: new Date()
+  },
+  telefone:{
+    type:String,
+    required: [true, "O telefone é obrigatório!"],
+    maxlength: [20, "O telefone deve ter no máximo 20 caracteres!"]
   },
   usuario:{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'usuarios'
+    ref: USER_MODEL_NAME,
+    required:[true, "O usuário criador é requerido!"]
   }
 });
 

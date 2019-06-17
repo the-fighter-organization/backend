@@ -15,9 +15,8 @@ export default class UsuarioService implements IReadOnlyService, IEditService {
     }
 
     model.senha = CryptoJS.HmacSHA1(model.senha, passwordHash).toString()
-    console.log(model._id)
     try {
-      if (!model._id) {
+      if (!req.body._id) {
         console.log("Inserindo")
         model = await model.save();
       } else {
@@ -53,7 +52,8 @@ export default class UsuarioService implements IReadOnlyService, IEditService {
   }
 
   async remove(req: express.Request, res: express.Response) {
-    if (!req.params.id) {
+    console.log(req.user)
+    if (!req.params.id || req.params.id != req.user) {
       return res.status(400);
     }
     try {

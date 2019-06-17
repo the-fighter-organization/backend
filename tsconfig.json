@@ -6,7 +6,7 @@
     "removeComments": true,
     "preserveConstEnums": false,
     "sourceMap": true,
-    "types": ["node", "express"],
+    "types": ["node", "express", "mocha"],
     "noUnusedLocals": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,

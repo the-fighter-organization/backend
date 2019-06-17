@@ -39,7 +39,9 @@ const userCRUDSchema = new mongoose.Schema({
   email: {
     type: String,
     required: [true, "O e-mail é obrigatório!"],
-    maxlength: [40, "O email deve ter no máximo 40 caracteres"]
+    maxlength: [40, "O email deve ter no máximo 40 caracteres"],
+    unique: [true, "Esse e-mail já está sendo usado!"],
+    index: true
   },
   senha: {
     type: String,
