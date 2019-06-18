@@ -18,6 +18,10 @@ export default class AlunoService implements IReadOnlyService, IEditService {
       } else {
         model = await AlunoCRUDModel.findOneAndUpdate({ _id: model._id }, model)
       }
+
+      if(!model){
+        return res.status(400).json({message : "A alteração de usuário resultou em erro"} as Error)
+      }
       return res.status(200).json(model);
     } catch (error) {
       return res.status(500).json({ error });

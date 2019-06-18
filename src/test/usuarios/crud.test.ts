@@ -60,14 +60,8 @@ describe("CRUD de usuário", () => {
                     url: `${TEST_BASE_URL}/${CONTROLLER}/authenticate`,
                     form: objLogin
                 }, function (err, httpResponse, body) {
-                    if (err) {
-                        done(err)
-                    }
-
-                    expect(httpResponse.statusCode, "Login deu certo?").to.equal(200)
-                    token = JSON.parse(body).token
+                    expect(httpResponse.statusCode, "Login deu erro?").to.equal(401)
                     done()
-                    console.log(token)
                 })
         })
     })

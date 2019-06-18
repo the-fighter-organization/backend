@@ -1,49 +1,43 @@
 import * as mongoose from "mongoose";
-import { IUserModel, USER_MODEL_NAME } from "../usuarios/Usuario";
+import { USER_MODEL_NAME, IUserModel } from "../usuarios/Usuario";
+import './types'
+import { Alunos } from "./types";
 
 export interface IAlunoModel extends mongoose.Document {
   nome: string;
   dataNascimento: Date;
-  enderecos: [{
-    rua:string,
-    numero:string,
-    bairro:string,
-    cidade:string,
-    uf:string
-  }],
-  inativo:boolean;
-  responsavel:mongoose.Schema.Types.ObjectId;
-  usuario: mongoose.Schema.Types.ObjectId
-}
-
-export interface IEndereco{
-  numero:string;
-  rua:string;
-  bairro:string;
-  cidade:string;
-  uf:string;
-}
-
-export interface IResponsavel{
-  nome:string;
   cpf:string;
-  endereco:IEndereco;
+  rg:string;
+  sexo: Alunos.Types.Sexo;
+  nacionalidade: Alunos.Types.Nacionalidade;
+  naturalidade: Alunos.Types.Nacionalidade;
+  numeroZempo:string;
+  numeroFiliacao:string;
+  endereco: Alunos.Types.IEndereco,
   telefone:string;
+  email:string;
+  instituicaoEnsino:string;
+  periodo: Alunos.Types.PeriodoEnsino;
+  ano:string;
+  responsaveis:mongoose.Schema.Types.ObjectId[];
+  inativo:boolean;
+  usuario: mongoose.Schema.Types.ObjectId
 }
 
 export interface IAlunoResponse {
   _id: mongoose.Schema.Types.ObjectId;
   nome: string;
   dataNascimento: Date;
-  endereco: IEndereco,
-  inativo:boolean;
-  responsavel:IResponsavel;
+  endereco: Alunos.Types.IEndereco,
+  inativo: boolean;
+  responsaveis: Alunos.Types.IResponsavel[];
   usuario: IUserModel
 }
 
+
 export const ALUNO_MODEL_NAME = "alunos";
 // Endereços
-const enderecoSchema = new mongoose.Schema({
+const enderecoSchema = new mongoose.Schema<Alunos.Types.IEndereco>({
   rua: {
     type: String,
     required: [true, "A rua é obrigatória!"],
@@ -104,7 +98,8 @@ const alunoCRUDSchema = new mongoose.Schema({
   },
   endereco: enderecoSchema,
   inativo: {
-    type: Boolean
+    type: Boolean,
+    default:false
   },
   responsavel:responsavelSchema,
   dataRegistro:{
