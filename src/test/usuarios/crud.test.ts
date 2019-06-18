@@ -34,8 +34,26 @@ describe("CRUD de usuário", () => {
     })
 
     describe("#Login", () => {
-        it("Fazendo login de usuário", done => {
+        it("Fazendo login de usuário (Login correto)", done => {
             let objLogin = {email : objTeste.email, senha : objTeste.senha};
+
+            request.post(
+                {
+                    url: `${TEST_BASE_URL}/${CONTROLLER}/authenticate`,
+                    form: objLogin
+                }, function (err, httpResponse, body) {
+                    if (err) {
+                        done(err)
+                    }
+
+                    expect(httpResponse.statusCode, "Login deu certo?").to.equal(200)
+                    token = JSON.parse(body).token
+                    done()
+                    console.log(token)
+                })
+        })
+        it("Fazendo login de usuário (Login errado)", done => {
+            let objLogin = {email : objTeste.email, senha : "Uma senha errada qualquer"};
 
             request.post(
                 {
