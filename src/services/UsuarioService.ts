@@ -52,8 +52,7 @@ export default class UsuarioService implements IReadOnlyService, IEditService {
   }
 
   async remove(req: express.Request, res: express.Response) {
-    console.log(req.user)
-    if (!req.params.id || req.params.id != req.user) {
+    if (!req.params.id || req.params.id != req.user._doc._id) {
       return res.status(400);
     }
     try {
