@@ -1,8 +1,7 @@
-// import * as should from 'should';
 import * as request from 'request'
 import { expect } from 'chai';
 import { TEST_BASE_URL } from '../constants';
-import { IUserModel, UserCRUDModel } from '../../model/usuarios/Usuario';
+import { IUserModel } from '../../model/usuarios/Usuario';
 
 const CONTROLLER = "usuarios";
 let token = null;
