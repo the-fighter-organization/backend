@@ -4,6 +4,7 @@ import './types'
 import { Alunos } from "./types";
 
 export interface IAlunoModel extends mongoose.Document {
+  // Dados do aluno
   nome: string;
   dataNascimento: Date;
   cpf:string;
@@ -13,24 +14,69 @@ export interface IAlunoModel extends mongoose.Document {
   naturalidade: Alunos.Types.Nacionalidade;
   numeroZempo:string;
   numeroFiliacao:string;
-  endereco: Alunos.Types.IEndereco,
+  // Filiação e responsáveis
+  responsaveis:[Alunos.Types.IResponsavel];
+  // Endereço  
+  endereco: [Alunos.Types.IEndereco],
+  // Contato
   telefone:string;
   email:string;
+  // Escolaridade
   instituicaoEnsino:string;
   periodo: Alunos.Types.PeriodoEnsino;
   ano:string;
-  responsaveis:mongoose.Schema.Types.ObjectId[];
+  // Demais Informações
+  graduacaoAtual:string;
+  pesoAtual: number;
+  alturaAtual:number;
+  dataUltimaGraduacao:Date;
+  categoria:string;
+  tipoSanguineo:string;
+  dataFiliacao:Date;
+  situacaoFejur:string;
+  situacaoFbj:string;
+  observacoesMedicas:string;
+  // Administrativo
   inativo:boolean;
   usuario: mongoose.Schema.Types.ObjectId
 }
 
 export interface IAlunoResponse {
-  _id: mongoose.Schema.Types.ObjectId;
+  // Dados do aluno
   nome: string;
   dataNascimento: Date;
+  cpf:string;
+  rg:string;
+  sexo: Alunos.Types.Sexo;
+  nacionalidade: Alunos.Types.Nacionalidade;
+  naturalidade: Alunos.Types.Nacionalidade;
+  numeroZempo:string;
+  numeroFiliacao:string;
+  // Filiação e responsáveis
+  responsaveis:Alunos.Types.IResponsavel[];
+  // Endereço  
   endereco: Alunos.Types.IEndereco,
-  inativo: boolean;
-  responsaveis: Alunos.Types.IResponsavel[];
+  // Contato
+  telefone:string;
+  email:string;
+  // Escolaridade
+  instituicaoEnsino:string;
+  periodo: Alunos.Types.PeriodoEnsino;
+  ano:string;
+  // Demais Informações
+  graduacaoAtual:string;
+  pesoAtual: number;
+  alturaAtual:number;
+  dataUltimaGraduacao:Date;
+  categoria:string;
+  tipoSanguineo:string;
+  dataFiliacao:Date;
+  situacaoFejur:string;
+  situacaoFbj:string;
+  observacoesMedicas:string;
+  // Administrativo
+  inativo:boolean;
+  dataRegistro:Date;
   usuario: IUserModel
 }
 
@@ -38,10 +84,10 @@ export interface IAlunoResponse {
 export const ALUNO_MODEL_NAME = "alunos";
 // Endereços
 const enderecoSchema = new mongoose.Schema<Alunos.Types.IEndereco>({
-  rua: {
+  logradouro: {
     type: String,
-    required: [true, "A rua é obrigatória!"],
-    maxlength: [50, "A rua deve ter no máximo 40 caracteres!"]
+    required: [true, "O logradouro é obrigatório!"],
+    maxlength: [50, "O logradouro deve ter no máximo 40 caracteres!"]
   },
   numero: {
     type: String,
@@ -57,6 +103,11 @@ const enderecoSchema = new mongoose.Schema<Alunos.Types.IEndereco>({
     type: String,
     required: [true, "A cidade é obrigatória!"],
     maxlength: [60, "A cidade deve ter no máximo 60 caracteres!"]
+  },
+  cep: {
+    type: String,
+    required: [true, "O CEP é obrigatório!"],
+    maxlength: [8, "O CEP deve ter no máximo 8 caracteres!"]
   },
   uf: {
     type: String,
@@ -78,15 +129,25 @@ const responsavelSchema = new mongoose.Schema({
     minlength: [11, "O CPF deve ter 11 caracteres"],
     maxlength: [11, "O CPF deve ter 11 caracteres"]
   },
-  endereco: enderecoSchema,
+  rg: {
+    type: String,
+    required: [true, "O RG é obrigatório!"],
+    maxlength: [11, "O RF deve ter 11 caracteres"]
+  },
   telefone: {
     type:String,
     required:[true, "O telefone é obrigatório"],
     maxlength: [15, "O telefone deve ter no máximo 15 caracteres!"]
-  }
+  },
+  nivelParentesco: {
+    type:Alunos.Types.NivelParentesco,
+    required:[true, "O nível de parentesco é obrigatório"],
+  },
+  observacao: String
 });
 
 const alunoCRUDSchema = new mongoose.Schema({
+  // Dados do aluno
   nome: {
     type: String,
     required: [true, "O nome do aluno é obrigatório!"],
@@ -96,20 +157,104 @@ const alunoCRUDSchema = new mongoose.Schema({
     type: Date,
     required: [true, "A data de nascimento é obrigatória!"]
   },
+  cpf: {
+    type: String,
+    required: [true, "O CPF é obrigatório!"],
+    minlength: [11, "O CPF deve ter 11 caracteres"],
+    maxlength: [11, "O CPF deve ter 11 caracteres"]
+  },
+  rg: {
+    type: String,
+    required: [true, "O RG é obrigatório!"],
+    maxlength: [11, "O RF deve ter 11 caracteres"]
+  },
+  sexo:{
+    type: Alunos.Types.Sexo,
+    required: [true, "O sexo é obrigatório"]
+  },
+  nacionalidade:{
+    type: String,
+    required: [true, "A nacionalidade é obrigatória"],
+    maxlength: [100, "A nacionalidade deve ter no máximo 100 caracteres"]
+  },
+  naturalidade:{
+    type: String,
+    maxlength: [100, "A naturalidade deve ter no máximo 100 caracteres"]
+  },
+  numeroZempo:{
+    type: String,
+    required: [true, "O N° Zempo é obrigatório"],
+    maxlength: [20, "O N° Zempo deve ter no máximo 20 caracteres"]
+  },
+  numeroFiliacao:{
+    type: String,
+    required: [true, "O N° de filiação é obrigatório"],
+    maxlength: [20, "O N° de filiação deve ter no máximo 20 caracteres"]
+  },
+  // Filiação e responsáveis
+  responsaveis:[responsavelSchema],
+  // Endereço
   endereco: enderecoSchema,
-  inativo: {
-    type: Boolean,
-    default:false
-  },
-  responsavel:responsavelSchema,
-  dataRegistro:{
-    type:Date,
-    default: new Date()
-  },
+  // Contato
   telefone:{
     type:String,
     required: [true, "O telefone é obrigatório!"],
     maxlength: [20, "O telefone deve ter no máximo 20 caracteres!"]
+  },
+  email:{
+    type:String,
+    required: [true, "O email é obrigatório!"],
+    maxlength: [60, "O email deve ter no máximo 60 caracteres!"]
+  },
+  // Escolaridade
+  instituicaoEnsino:{
+    type:String,
+    maxlength: [80, "A instituição de ensino deve ter no máximo 80 caracteres!"]
+  },
+  periodo:{
+    type:Alunos.Types.PeriodoEnsino,
+  },
+  ano:{
+    type:String,
+    maxlength: [20, "O ano deve ter no máximo 20 caracteres!"]
+  },
+  // Demais informações
+  graduacaoAtual:{
+    type:String,
+    maxlength: [20, "A graduação atual deve ter no máximo 20 caracteres!"]
+  },
+  pesoatual:Number,
+  alturaAtual:Number,
+  dataUltimaGraduacao:Date,
+  categoria:{
+    type:String,
+    maxlength: [20, "A categoria deve ter no máximo 20 caracteres!"]
+  },
+  tipoSanguineo:{
+    type:String,
+    maxlength: [20, "O tipo sanguíneo deve ter no máximo 20 caracteres!"]
+  },
+  dataFiliacao:Date,
+  situacaoFejur:{
+    type:String,
+    maxlength: [20, "A situação da Fejur deve ter no máximo 20 caracteres!"]
+  },
+  situacaoFbj:{
+    type:String,
+    maxlength: [20, "A situação da FBJ deve ter no máximo 20 caracteres!"]
+  },
+  observacoesMedicas:{
+    type:String,
+    maxlength: [300, "As observações médicas devem ter no máximo 300 caracteres!"]
+  },
+  // Administrativo
+  inativo: {
+    type: Boolean,
+    default:false
+  },
+  dataRegistro:{
+    type:Date,
+    default: new Date()
   },
   usuario:{
     type: mongoose.Schema.Types.ObjectId,

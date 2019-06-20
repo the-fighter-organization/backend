@@ -2,10 +2,15 @@ import IReadOnlyService from "./types/IReadOnlyService";
 import IEditService from "./types/IEditService";
 import * as express from "express";
 import { AlunoCRUDModel } from "../model/alunos/Aluno";
+import { getUserIdFromRequest } from "../util/userModelShortcuts";
 
 export default class AlunoService implements IReadOnlyService, IEditService {
   async save(req: express.Request, res: express.Response) {
+    // preenchendo model
     let model = new AlunoCRUDModel(req.body);
+    model.usuario = getUserIdFromRequest(req);
+
+    // validando
     let validation = model.validateSync();
 
     if (validation) {
@@ -13,7 +18,7 @@ export default class AlunoService implements IReadOnlyService, IEditService {
     }
 
     try {
-      if (!model._id) {
+      if (!req.body._id) {
         model = await model.save();
       } else {
         model = await AlunoCRUDModel.findOneAndUpdate({ _id: model._id }, model)
