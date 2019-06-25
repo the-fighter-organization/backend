@@ -1,6 +1,7 @@
 import * as bodyParser from 'body-parser';
 import * as express from 'express';
 import * as morgan from 'morgan';
+import * as cors from 'cors';
 
 import DatabaseConfig from './config/database';
 import ControllerConfig from './config/controller';
@@ -9,6 +10,7 @@ import AuthConfig from './config/authentication';
 const app = express();
 
 // middlewares do express
+app.use(cors({origin:['http://localhost:3000']}))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(morgan('combined'));
