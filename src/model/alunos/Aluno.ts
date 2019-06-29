@@ -9,6 +9,8 @@ export interface IAlunoModel extends mongoose.Document {
   dataNascimento: Date;
   cpf:string;
   rg:string;
+  orgaoEmissor:string;
+  dataExpedicao:string;
   sexo: Alunos.Types.Sexo;
   nacionalidade: Alunos.Types.Nacionalidade;
   naturalidade: Alunos.Types.Nacionalidade;
@@ -47,6 +49,8 @@ export interface IAlunoResponse {
   dataNascimento: Date;
   cpf:string;
   rg:string;
+  orgaoEmissor:string;
+  dataExpedicao:string;
   sexo: Alunos.Types.Sexo;
   nacionalidade: Alunos.Types.Nacionalidade;
   naturalidade: Alunos.Types.Nacionalidade;
@@ -134,6 +138,15 @@ const responsavelSchema = new mongoose.Schema({
     required: [true, "O RG é obrigatório!"],
     maxlength: [11, "O RF deve ter 11 caracteres"]
   },
+  orgaoEmissor: {
+    type: String,
+    required: [true, "O órgão emissor é obrigatório!"],
+    maxlength: [30, "O órgão emissor deve ter 30 caracteres"]
+  },
+  dataExpedicao: {
+    type: Date,
+    required: [true, "A data de expedição é obrigatório!"],
+  },
   telefone: {
     type:String,
     required:[true, "O telefone é obrigatório"],
@@ -168,6 +181,15 @@ const alunoCRUDSchema = new mongoose.Schema({
     required: [true, "O RG é obrigatório!"],
     maxlength: [11, "O RF deve ter 11 caracteres"]
   },
+  orgaoEmissor: {
+    type: String,
+    required: [true, "O órgão emissor é obrigatório!"],
+    maxlength: [30, "O órgão emissor deve ter 30 caracteres"]
+  },
+  dataExpedicao: {
+    type: Date,
+    required: [true, "A data de expedição é obrigatório!"],
+  },
   sexo:{
     type: Alunos.Types.Sexo,
     required: [true, "O sexo é obrigatório"]
@@ -190,6 +212,10 @@ const alunoCRUDSchema = new mongoose.Schema({
     type: String,
     required: [true, "O N° de filiação é obrigatório"],
     maxlength: [20, "O N° de filiação deve ter no máximo 20 caracteres"]
+  },
+  situacaoCbj:{
+    type: Alunos.Types.SituacaoCBJ,
+    required: [true, "A situação da CBJ é obrigatória"],
   },
   // Filiação e responsáveis
   responsaveis:[responsavelSchema],

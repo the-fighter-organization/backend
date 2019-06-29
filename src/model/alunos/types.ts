@@ -37,4 +37,10 @@ export namespace Alunos.Types {
         VESPERTINO,
         NOTURNO
     }
+
+    export enum SituacaoCBJ {
+        REGULAR,
+        PENDENTE,
+        IRREGULAR
+    }
 }
