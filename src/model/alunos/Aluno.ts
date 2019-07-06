@@ -140,12 +140,12 @@ const responsavelSchema = new mongoose.Schema({
   },
   orgaoEmissor: {
     type: String,
-    required: [true, "O órgão emissor é obrigatório!"],
+    // required: [true, "O órgão emissor é obrigatório!"],
     maxlength: [30, "O órgão emissor deve ter 30 caracteres"]
   },
   dataExpedicao: {
     type: Date,
-    required: [true, "A data de expedição é obrigatório!"],
+    // required: [true, "A data de expedição é obrigatório!"],
   },
   telefone: {
     type:String,
@@ -183,12 +183,12 @@ const alunoCRUDSchema = new mongoose.Schema({
   },
   orgaoEmissor: {
     type: String,
-    required: [true, "O órgão emissor é obrigatório!"],
+    // required: [true, "O órgão emissor é obrigatório!"],
     maxlength: [30, "O órgão emissor deve ter 30 caracteres"]
   },
   dataExpedicao: {
     type: Date,
-    required: [true, "A data de expedição é obrigatório!"],
+    // required: [true, "A data de expedição é obrigatório!"],
   },
   sexo:{
     type: Alunos.Types.Sexo,
@@ -205,17 +205,17 @@ const alunoCRUDSchema = new mongoose.Schema({
   },
   numeroZempo:{
     type: String,
-    required: [true, "O N° Zempo é obrigatório"],
+    // required: [true, "O N° Zempo é obrigatório"],
     maxlength: [20, "O N° Zempo deve ter no máximo 20 caracteres"]
   },
   numeroFiliacao:{
     type: String,
-    required: [true, "O N° de filiação é obrigatório"],
+    // required: [true, "O N° de filiação é obrigatório"],
     maxlength: [20, "O N° de filiação deve ter no máximo 20 caracteres"]
   },
   situacaoCbj:{
     type: Alunos.Types.SituacaoCBJ,
-    required: [true, "A situação da CBJ é obrigatória"],
+    // required: [true, "A situação da CBJ é obrigatória"],
   },
   // Filiação e responsáveis
   responsaveis:[responsavelSchema],
@@ -229,7 +229,7 @@ const alunoCRUDSchema = new mongoose.Schema({
   },
   email:{
     type:String,
-    required: [true, "O email é obrigatório!"],
+    // required: [true, "O email é obrigatório!"],
     maxlength: [60, "O email deve ter no máximo 60 caracteres!"]
   },
   // Escolaridade
