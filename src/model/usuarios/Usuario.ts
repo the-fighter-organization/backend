@@ -1,6 +1,6 @@
 import * as mongoose from "mongoose";
 import * as jwt from "jsonwebtoken";
-import { secret } from "../../config/authentication.config.json";
+import { secret } from "../../config/secrets.json";
 
 export interface IUserModel extends mongoose.Document {
   nome: string;

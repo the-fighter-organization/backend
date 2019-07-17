@@ -3,7 +3,7 @@ import IEditService from "./types/IEditService";
 import * as express from "express";
 import { UserCRUDModel as UserCRUDModel, UserLoginModel } from '../model/usuarios/Usuario';
 const CryptoJS = require("crypto-js");
-import {passwordHash} from '../config/authentication.config.json'
+import {passwordHash} from '../config/secrets.json'
 
 export default class UsuarioService implements IReadOnlyService, IEditService {
   async save(req: express.Request, res: express.Response) {
