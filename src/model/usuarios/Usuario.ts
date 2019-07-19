@@ -11,6 +11,14 @@ export interface IUserModel extends mongoose.Document {
   codigoConfirmacao?: string;
 }
 
+export interface IUserSaveModel extends mongoose.Document {
+  nome?: string;
+  sobrenome?: string;
+  email: string;
+  senha: string;
+  logoEmpresa?: string;
+}
+
 export interface IUserLoginModel extends mongoose.Document {
   email: string;
   senha: string;
