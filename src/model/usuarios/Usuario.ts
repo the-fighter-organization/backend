@@ -3,13 +3,23 @@ import * as jwt from "jsonwebtoken";
 import { secret } from "../../config/secrets.json";
 
 export interface IUserModel extends mongoose.Document {
-  nome: string;
+  nome?: string;
+  sobrenome?: string;
   email: string;
   senha: string;
+  logoEmpresa?: string;
+  codigoConfirmacao?: string;
+}
+
+export interface IUserSaveModel extends mongoose.Document {
+  nome?: string;
+  sobrenome?: string;
+  email: string;
+  senha: string;
+  logoEmpresa?: string;
 }
 
 export interface IUserLoginModel extends mongoose.Document {
-  nome?: string;
   email: string;
   senha: string;
   authenticate: (usuario?: string, senha?: string) => Promise<
@@ -19,12 +29,14 @@ export interface IUserLoginModel extends mongoose.Document {
 
 export interface IUserInfo {
   nome: string;
+  sobrenome: string;
   email: string;
 }
 
 export interface IUserAuthenticationResponse {
   token: string;
   userInfo: IUserInfo;
+  _error?: string
 }
 
 export const USER_MODEL_NAME = "usuarios";
@@ -35,6 +47,10 @@ const userCRUDSchema = new mongoose.Schema({
     type: String,
     required: [true, "O nome de usuário é obrigatório!"],
     maxlength: [40, "O nome deve ter no máximo 40 caracteres"]
+  },
+  sobrenome: {
+    type: String,
+    maxlength: [40, "O sobrenome deve ter no máximo 40 caracteres"]
   },
   email: {
     type: String,
@@ -47,14 +63,16 @@ const userCRUDSchema = new mongoose.Schema({
     type: String,
     required: [true, "A senha é obrigatória!"],
     maxlength: [40, "A senha deve ter no máximo 40 caracteres"]
+  },
+  logoEmpresa: {
+    type: String
+  },
+  codigoConfirmacao: {
+    type: String
   }
 });
 
 const userLoginSchema = new mongoose.Schema({
-  nome: {
-    type: String,
-    maxlength: [40, "O nome deve ter no máximo 40 caracteres"]
-  },
   email: {
     type: String,
     required: [true, "O e-mail é obrigatório!"],
@@ -78,20 +96,25 @@ userLoginSchema.methods.authenticate = async (email?: string, senha?: string): P
       return null;
     }
 
+    if (user.codigoConfirmacao) {
+      return { token: null, userInfo: null, _error: "Há uma confirmação de e-mail pendente, confira seu e-mail." };
+    }
+
     const token = jwt.sign(
       {
         email: user.email,
         nome: user.nome,
+        sobrenome: user.sobrenome,
         _id: user._id,
         generatedDate: new Date()
       },
       secret,
       {
-        expiresIn : '2h'
+        expiresIn: '2h'
       }
     );
 
-    return { token, userInfo: { email: user.email, nome: user.nome } } as IUserAuthenticationResponse;
+    return { token, userInfo: { email: user.email, nome: user.nome, sobrenome: user.sobrenome } } as IUserAuthenticationResponse;
   } catch (error) {
     throw error
   }
