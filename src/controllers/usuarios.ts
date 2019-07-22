@@ -9,11 +9,13 @@ const secureRoute =  passport.authenticate('bearer', { session: false });
 
 export default class UsuarioController {
   static config() {
-    router.post("/", service.save);
+    router.post("/novo", service.novo);
+    router.post("/editar-perfil", secureRoute, service.editarPerfil);
+    router.post("/editar-senha", secureRoute, service.editarSenha);
+    router.get("/confirmar-perfil/:id/:codigoConfirmacao", service.confirmarPerfil);
     router.post("/authenticate", service.authenticate);
-    router.get("/",service.findAll);
-    router.get("/:id",secureRoute,service.findOne);
-    router.delete("/:id", secureRoute, service.remove);
+    router.get("/current-user",secureRoute,service.findOne);
+    router.delete("/current-user", secureRoute, service.remove);
 
     return router;
   }

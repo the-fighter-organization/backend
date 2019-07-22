@@ -7,6 +7,7 @@ export interface IUserModel extends mongoose.Document {
   sobrenome?: string;
   email: string;
   senha: string;
+  senhaAConfirmar: string;
   logoEmpresa?: string;
   codigoConfirmacao?: string;
 }
@@ -27,6 +28,18 @@ export interface IUserLoginModel extends mongoose.Document {
   >;
 }
 
+export interface IUserEditarPerfilModel extends mongoose.Document {
+  nome: string;
+  sobrenome?: string;
+  email: string;
+  logoEmpresa?: string;
+}
+
+export interface IUserEditarSenhaModel extends mongoose.Document {
+  senha: string
+  confirmacaoSenha: string
+}
+
 export interface IUserInfo {
   nome: string;
   sobrenome: string;
@@ -36,11 +49,13 @@ export interface IUserInfo {
 export interface IUserAuthenticationResponse {
   token: string;
   userInfo: IUserInfo;
-  _error?: string
+  error?: string
 }
 
 export const USER_MODEL_NAME = "usuarios";
 export const USER_MODEL_LOGIN_NAME = "UsuarioLogin";
+export const USER_MODEL_EDITAR_PERFIL_NAME = "UsuarioEditarPerfil";
+export const USER_MODEL_EDITAR_SENHA_NAME = "UsuarioEditarSenha";
 
 const userCRUDSchema = new mongoose.Schema({
   nome: {
@@ -64,6 +79,10 @@ const userCRUDSchema = new mongoose.Schema({
     required: [true, "A senha é obrigatória!"],
     maxlength: [40, "A senha deve ter no máximo 40 caracteres"]
   },
+  senhaAConfirmar: {
+    type: String,
+    maxlength: [40, "A senha deve ter no máximo 40 caracteres"]
+  },
   logoEmpresa: {
     type: String
   },
@@ -85,6 +104,41 @@ const userLoginSchema = new mongoose.Schema({
   }
 });
 
+const userEditarPerfilSchema = new mongoose.Schema({
+  nome: {
+    type: String,
+    required: [true, "O nome de usuário é obrigatório!"],
+    maxlength: [40, "O nome deve ter no máximo 40 caracteres"]
+  },
+  sobrenome: {
+    type: String,
+    maxlength: [40, "O sobrenome deve ter no máximo 40 caracteres"]
+  },
+  email: {
+    type: String,
+    required: [true, "O e-mail é obrigatório!"],
+    maxlength: [40, "O email deve ter no máximo 40 caracteres"],
+    unique: [true, "Esse e-mail já está sendo usado!"],
+    index: true
+  },
+  logoEmpresa: {
+    type: String
+  }
+});
+
+const userEditarSenhaSchema = new mongoose.Schema({
+  senha: {
+    type: String,
+    required: [true, "A senha é obrigatória!"],
+    maxlength: [40, "A senha deve ter no máximo 40 caracteres"]
+  },
+  confirmacaoSenha: {
+    type: String,
+    required: [true, "A confirmação de senha é obrigatória!"],
+    maxlength: [40, "A confirmação de senha deve ter no máximo 40 caracteres"]
+  }
+});
+
 userLoginSchema.methods.authenticate = async (email?: string, senha?: string): Promise<
   IUserAuthenticationResponse
 > => {
@@ -96,8 +150,8 @@ userLoginSchema.methods.authenticate = async (email?: string, senha?: string): P
       return null;
     }
 
-    if (user.codigoConfirmacao) {
-      return { token: null, userInfo: null, _error: "Há uma confirmação de e-mail pendente, confira seu e-mail." };
+    if (user.codigoConfirmacao && !user.senhaAConfirmar) {
+      return { token: null, userInfo: null, error: "Para fazer login é necessário confirmar a criação da sua conta!" };
     }
 
     const token = jwt.sign(
@@ -129,5 +183,17 @@ export const UserCRUDModel = mongoose.model<IUserModel>(
 export const UserLoginModel = mongoose.model<IUserLoginModel>(
   USER_MODEL_LOGIN_NAME,
   userLoginSchema,
+  USER_MODEL_NAME
+);
+
+export const UserEditarPerfilModel = mongoose.model<IUserEditarPerfilModel>(
+  USER_MODEL_EDITAR_PERFIL_NAME,
+  userEditarPerfilSchema,
+  USER_MODEL_NAME
+);
+
+export const UserEditarSenhaModel = mongoose.model<IUserEditarSenhaModel>(
+  USER_MODEL_EDITAR_SENHA_NAME,
+  userEditarSenhaSchema,
   USER_MODEL_NAME
 );
