@@ -40,7 +40,7 @@ export default class UsuarioService {
         from: envioEmail.email,
         to: model.email,
         subject: 'Criação de conta - Warrior',
-        html: `<span>Clique nesse link para confirmar a criação da sua conta: http://localhost:3001/usuarios/confirmar-perfil/${model._id}/${model.codigoConfirmacao}</span>`
+        html: `<span>Clique nesse link para confirmar a criação da sua conta: <a href="${req.body.linkConfirmacaoPerfil}">Clique aqui!</a></span>`
       };
 
       const emailResponse = await transporter.sendMail(mailOptions);
@@ -91,9 +91,9 @@ export default class UsuarioService {
         from: envioEmail.email,
         to: model.email,
         subject: 'Alteração de senha - Warrior',
-        html: `<span>Clique nesse link para confirmar sua alteração de senha: http://localhost:3001/usuarios/confirmar-perfil/${model._id}/${model.codigoConfirmacao}</span>`
+        html: `<span>Clique nesse link para confirmar sua alteração de senha: <a href="${req.body.linkConfirmacaoPerfil}">Clique aqui!</a></span>`
       };
-
+      // http://localhost:3001/usuarios/confirmar-perfil/${model._id}/${model.codigoConfirmacao}
       const emailResponse = await transporter.sendMail(mailOptions);
 
       return res.status(200).json({ model, emailResponse });
