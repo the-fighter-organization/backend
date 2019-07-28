@@ -11,8 +11,8 @@ const app = express();
 
 // middlewares do express
 app.use(cors({origin:['http://localhost:3000']}))
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.json({limit : '5mb'}))
+app.use(bodyParser.urlencoded({extended:true, limit : '50mb'}));
 app.use(morgan('combined'));
 
 
