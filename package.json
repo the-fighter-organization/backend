@@ -6,8 +6,8 @@
   "scripts": {
     "build": "tsc -w",
     "dev": "nodemon dist/index.js",
-    "prestart": "tsc -w",
-    "start": "nodemon dist/index.js",
+    "prestart": "tsc",
+    "start": "node dist/index.js",
     "test": "mocha dist/test/**/*.js"
   },
   "author": "Igor Bueno",
