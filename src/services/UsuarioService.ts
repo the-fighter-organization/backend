@@ -1,5 +1,5 @@
 import * as express from "express";
-import { UserCRUDModel as UserCRUDModel, UserLoginModel, UserEditarPerfilModel, UserEditarSenhaModel } from '../model/usuarios/Usuario';
+import { UserCRUDModel as UserCRUDModel, UserLoginModel, UserEditarPerfilModel, UserEditarSenhaModel, UserNovoModel } from '../model/usuarios/Usuario';
 const CryptoJS = require("crypto-js");
 import { passwordHash } from '../config/secrets.json'
 import { getUserIdFromRequest } from "../util/userModelShortcuts";
@@ -11,7 +11,7 @@ export default class UsuarioService {
   async novo(req: express.Request, res: express.Response) {
     const { _id, ...body } = req.body;
 
-    let model = new UserCRUDModel(body);
+    let model = new UserNovoModel(body);
     let validation = model.validateSync();
 
     if (validation) {
@@ -25,7 +25,7 @@ export default class UsuarioService {
       model = await model.save();
 
       if (model === null) {
-        throw 'Usuário não encontrado!'
+        throw 'Usuário não criado!'
       }
 
       var transporter = createTransport({
@@ -36,16 +36,20 @@ export default class UsuarioService {
         }
       });
 
+      const link = `${req.body.linkConfirmacao}/${model._id}/${model.codigoConfirmacao}`
+
       var mailOptions = {
         from: envioEmail.email,
         to: model.email,
         subject: 'Criação de conta - Warrior',
-        html: `<span>Clique nesse link para confirmar a criação da sua conta: <a href="${req.body.linkConfirmacaoPerfil}">Clique aqui!</a></span>`
+        html: `<span>Clique nesse link para confirmar a criação da sua conta: <a href="${link}">${link}</a></span>`
       };
 
       const emailResponse = await transporter.sendMail(mailOptions);
 
-      return res.status(200).json({ model, emailResponse });
+      const {senha, senhaAConfirmar, logoEmpresa, codigoConfirmacao, ...response} = model.toObject();
+
+      return res.status(200).json({ response, emailResponse });
 
     } catch (error) {
       return res.status(500).json({ error });
@@ -66,14 +70,14 @@ export default class UsuarioService {
 
     body.senha = CryptoJS.HmacSHA1(body.senha, passwordHash).toString()
 
-    let model = await UserCRUDModel.findOne({ _id: getUserIdFromRequest(req) });
+    let model = await UserCRUDModel.findOne({ email: body.email });
     model.codigoConfirmacao = uuidv4();
     model.senhaAConfirmar = body.senha;
 
     try {
       model = await UserCRUDModel
         .findOneAndUpdate({ _id: model._id }, model, { new: true })
-        .select(['-senha', '-senhaAConfirmar'])
+        .select(['-senha', '-senhaAConfirmar', '-logoEmpresa', '-logoEmpresa'])
 
       if (model === null) {
         throw 'Usuário não encontrado!'
@@ -87,13 +91,15 @@ export default class UsuarioService {
         }
       });
 
+      const link = `${req.body.linkConfirmacao}/${model._id}/${model.codigoConfirmacao}`
+
       var mailOptions = {
         from: envioEmail.email,
         to: model.email,
         subject: 'Alteração de senha - Warrior',
-        html: `<span>Clique nesse link para confirmar sua alteração de senha: <a href="${req.body.linkConfirmacaoPerfil}">Clique aqui!</a></span>`
+        html: `<span>Clique nesse link para confirmar sua alteração de senha: <a href="${link}">${link}</a></span>`
       };
-      // http://localhost:3001/usuarios/confirmar-perfil/${model._id}/${model.codigoConfirmacao}
+
       const emailResponse = await transporter.sendMail(mailOptions);
 
       return res.status(200).json({ model, emailResponse });
@@ -114,7 +120,7 @@ export default class UsuarioService {
     try {
       model = await UserEditarPerfilModel
         .findOneAndUpdate({ _id: model._id }, model, { new: true })
-        .select(['-senha', '-codigoConfirmacao', '-senhaAConfirmar'])
+        .select(['-senha', '-codigoConfirmacao', '-senhaAConfirmar', '-logoEmpresa'])
 
       if (model === null) {
         throw 'Usuário não encontrado!'
@@ -145,7 +151,9 @@ export default class UsuarioService {
       obj.codigoConfirmacao = null;
       const model = await obj.save();
 
-      return res.status(200).json(model);
+      const {senha, senhaAConfirmar, logoEmpresa, codigoConfirmacao : confirmacao, ...response} = model.toObject();
+
+      return res.status(200).json(response);
     }
     catch (error) {
       return res.status(500).json(error)
@@ -178,7 +186,7 @@ export default class UsuarioService {
     try {
       let model = await UserCRUDModel
         .findOneAndRemove({ _id: getUserIdFromRequest(req) })
-        .select(['-senha', '-codigoConfirmacao']);
+        .select(['-senha', '-codigoConfirmacao', '-senhaAConfirmar', '-logoEmpresa']);
 
       return res.status(200).json(model);
     } catch (error) {
@@ -190,7 +198,7 @@ export default class UsuarioService {
     try {
       let result = await UserCRUDModel
         .findOne({ _id: getUserIdFromRequest(req) })
-        .select(['-senha', '-codigoConfirmacao']);
+        .select(['-senha', '-codigoConfirmacao', '-senhaAConfirmar']);
 
       if (result) {
         return res.status(200).json(result)

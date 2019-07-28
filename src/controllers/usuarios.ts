@@ -11,7 +11,7 @@ export default class UsuarioController {
   static config() {
     router.post("/novo", service.novo);
     router.post("/editar-perfil", secureRoute, service.editarPerfil);
-    router.post("/editar-senha", secureRoute, service.editarSenha);
+    router.post("/editar-senha", service.editarSenha);
     router.get("/confirmar-perfil/:id/:codigoConfirmacao", service.confirmarPerfil);
     router.post("/authenticate", service.authenticate);
     router.get("/current-user",secureRoute,service.findOne);
