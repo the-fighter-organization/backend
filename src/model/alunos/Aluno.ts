@@ -201,7 +201,12 @@ const mensalidadeSchema = new mongoose.Schema({
     required: [true, 'A situação da mensalidade é obrigatória!'],
     enum: ['Aberta', 'Fechada', 'Cancelada']
   },
-  formasPagamento: [formaPagamentoSchema]
+  formasPagamento: [formaPagamentoSchema],
+  data: {
+    type: Date,
+    required: [true, 'A data é requerida'],
+    default: new Date()
+  }
 });
 
 

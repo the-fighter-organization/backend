@@ -5,6 +5,7 @@ export namespace Alunos.Types {
         situacao: boolean;
         formasPagamento: IAlunoMensalidadeFormaPagamento;
         observacoes: string;
+        data: Date
     }
 
     export interface IAlunoMensalidadeFormaPagamento {
