@@ -21,7 +21,10 @@ export default class AlunoService implements IReadOnlyService, IEditService {
       if (!req.body._id) {
         model = await model.save();
       } else {
-        model = await AlunoCRUDModel.findOneAndUpdate({ _id: req.body._id }, model, { new: true })
+        model = await AlunoCRUDModel.findOneAndUpdate(
+          { _id: req.body._id, usuario: model.usuario },
+          model,
+          { new: true })
       }
 
       if (!model) {
