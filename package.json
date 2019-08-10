@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc -w",
     "dev": "nodemon dist/index.js",
-    "prestart": "tsc",
+    "prestart": "tsc -p .",
     "start": "node dist/index.js",
     "test": "mocha dist/test/**/*.js"
   },
@@ -30,6 +30,9 @@
     "request": "^2.88.0",
     "should": "^13.2.3",
     "typescript": "^3.3.3333"
+  },
+  "engines": {
+    "node":"10.X"
   },
   "dependencies": {
     "body-parser": "^1.18.3",

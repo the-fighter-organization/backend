@@ -27,4 +27,5 @@ require('mongoose').Promise = global.Promise
 AuthConfig.config();
 
 // Iniciando o servidor
-app.listen(3001, () => console.log("Servidor iniciado na porta 3001"))
+const porta = process.env.PORT || 3001
+app.listen(porta, () => console.log(`Servidor iniciado na porta ${porta}`))
