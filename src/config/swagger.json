@@ -25,14 +25,10 @@
   "tags": [
     {
       "name": "usuarios",
-      "description": "Controle de usuários",
-      "externalDocs": {
-        "description": "Find out more",
-        "url": "http://swagger.io"
-      }
+      "description": "Controle de usuários"
     },
     {
-      "name": "store",
+      "name": "alunos",
       "description": "Access to Petstore orders"
     },
     {
