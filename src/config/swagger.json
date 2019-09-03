@@ -330,6 +330,93 @@
           }
         }
       }
+    },
+    "/turmas": {
+      "post": {
+        "tags": [
+          "turmas"
+        ],
+        "summary": "Insere/altera uma turma. Se tiver o Id altera, do contrário insere.",
+        "operationId": "salvarTurmas",
+        "requestBody": {
+          "description": "Corpo da requisição.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TurmaCRUD"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Falta algum campo ou algo está fora do estabelecido."
+          },
+          "401": {
+            "description": "Não autorizado."
+          },
+          "500": {
+            "description": "Acontece quando ocorre um erro interno no servidor."
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "turmas"
+        ],
+        "summary": "Busca todas as turmas.",
+        "operationId": "buscarTodasAsTurmas",
+        "responses": {
+          "400": {
+            "description": "Falta algum campo ou algo está fora do estabelecido."
+          },
+          "401": {
+            "description": "Não autorizado."
+          },
+          "500": {
+            "description": "Acontece quando ocorre um erro interno no servidor."
+          }
+        }
+      }
+    },
+    "/turmas/:id": {
+      "get": {
+        "tags": [
+          "turmas"
+        ],
+        "summary": "Busca uma turma por id.",
+        "operationId": "buscarTurmaPorId",
+        "responses": {
+          "400": {
+            "description": "Falta algum campo ou algo está fora do estabelecido."
+          },
+          "401": {
+            "description": "Não autorizado."
+          },
+          "500": {
+            "description": "Acontece quando ocorre um erro interno no servidor."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "turmas"
+        ],
+        "summary": "Deleta uma turma por id.",
+        "operationId": "removeTurmaPorId",
+        "responses": {
+          "400": {
+            "description": "Falta algum campo ou algo está fora do estabelecido."
+          },
+          "401": {
+            "description": "Não autorizado."
+          },
+          "500": {
+            "description": "Acontece quando ocorre um erro interno no servidor."
+          }
+        }
+      }
     }
   },
   "components": {
@@ -401,9 +488,21 @@
           }
         }
       },
+      "TurmaCRUD": {
+        "type": "object",
+        "properties": {
+          "_id": "string",
+          "usuario": "string",
+          "alunos": "array",
+          "arteMarcial": "string",
+          "localTreino": "string",
+          "colaboradores": "array"
+        }
+      },
       "AlunoCRUD": {
         "type": "object",
         "properties": {
+          "_id": "string",
           "nome": {
             "type": "string"
           },

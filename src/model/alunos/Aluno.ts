@@ -333,7 +333,7 @@ const alunoCRUDSchema = new mongoose.Schema({
   },
   dataRegistro: {
     type: Date,
-    default: new Date()
+    default: new Date(new Date().getUTCDate())
   },
   usuario: {
     type: mongoose.Schema.Types.ObjectId,
