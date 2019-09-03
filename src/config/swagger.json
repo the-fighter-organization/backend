@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Warrior - Backend",
-    "description": "Esta é a documentação da API do sistema Warrior.",
+    "description": "Esta é a documentação da API do sistema Warrior. Versão base",
     "contact": {
       "email": "igor.mcbueno@gmail.com"
     },
