@@ -68,10 +68,10 @@ describe("Testando endpoints de usuário", () => {
     })
 
     describe("#Alterando", () => {
-        it("Alterando o usuário", done => {
+        it("Alterando perfil", done => {
             request.post(
                 {
-                    url: `${TEST_BASE_URL}/${CONTROLLER}`,
+                    url: `${TEST_BASE_URL}/${CONTROLLER}/editar-perfil`,
                     form: { ...objTeste, _id: idUsuario },
                     auth: {
                         bearer: token
@@ -80,7 +80,23 @@ describe("Testando endpoints de usuário", () => {
                     if (err) {
                         done(err)
                     }
-                    expect(httpResponse.statusCode, "Alterou o usuário?").to.equal(200)
+                    expect(httpResponse.statusCode, "Alterou o perfil?").to.equal(200)
+                    done()
+                })
+        })
+        it("Alterando senha", done => {
+            request.post(
+                {
+                    url: `${TEST_BASE_URL}/${CONTROLLER}/editar-senha`,
+                    form: { ...objTeste, _id: idUsuario },
+                    auth: {
+                        bearer: token
+                    }
+                }, function (err, httpResponse, body) {
+                    if (err) {
+                        done(err)
+                    }
+                    expect(httpResponse.statusCode, "Alterou senha?").to.equal(200)
                     done()
                 })
         })
@@ -90,7 +106,7 @@ describe("Testando endpoints de usuário", () => {
         it("Removendo o usuário", done => {
             request.delete(
                 {
-                    url: `${TEST_BASE_URL}/${CONTROLLER}/${idUsuario}`,
+                    url: `${TEST_BASE_URL}/${CONTROLLER}/current-user`,
                     auth: {
                         bearer: token
                     }
