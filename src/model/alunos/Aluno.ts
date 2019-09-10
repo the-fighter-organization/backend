@@ -1,94 +1,7 @@
 import * as mongoose from 'mongoose';
-import { USER_MODEL_NAME, IUserModel } from '../usuarios/Usuario';
+import { USER_MODEL_NAME } from '../usuarios/Usuario';
 import './types'
 import { Alunos } from './types';
-
-export interface IAlunoModel extends mongoose.Document {
-  // Dados do aluno
-  nome: string;
-  dataNascimento: Date;
-  cpf: string;
-  rg: string;
-  orgaoEmissor: string;
-  dataExpedicao: string;
-  sexo: Alunos.Types.Sexo;
-  nacionalidade: Alunos.Types.Nacionalidade;
-  naturalidade: Alunos.Types.Nacionalidade;
-  bolsista: boolean;
-  numeroZempo: string;
-  numeroFiliacao: string;
-  // Filiação e responsáveis
-  responsaveis: [Alunos.Types.IResponsavel];
-  // Endereço  
-  endereco: [Alunos.Types.IEndereco],
-  // Contato
-  telefone: string;
-  email: string;
-  // Escolaridade
-  instituicaoEnsino: string;
-  periodo: Alunos.Types.PeriodoEnsino;
-  ano: string;
-  // Demais Informações
-  graduacaoAtual: string;
-  pesoAtual: number;
-  alturaAtual: number;
-  dataUltimaGraduacao: Date;
-  categoria: string;
-  tipoSanguineo: string;
-  dataFiliacao: Date;
-  situacaoFejur: string;
-  situacaoFbj: string;
-  observacoesMedicas: string;
-  // Mensalidades
-  mensalidades: Alunos.Types.IAlunoMensalidade[];
-  // Administrativo
-  inativo: boolean;
-  usuario: mongoose.Schema.Types.ObjectId
-}
-
-export interface IAlunoResponse {
-  // Dados do aluno
-  nome: string;
-  dataNascimento: Date;
-  cpf: string;
-  rg: string;
-  orgaoEmissor: string;
-  dataExpedicao: string;
-  sexo: Alunos.Types.Sexo;
-  nacionalidade: Alunos.Types.Nacionalidade;
-  naturalidade: Alunos.Types.Nacionalidade;
-  numeroZempo: string;
-  numeroFiliacao: string;
-  // Filiação e responsáveis
-  responsaveis: Alunos.Types.IResponsavel[];
-  // Endereço  
-  endereco: Alunos.Types.IEndereco,
-  // Contato
-  telefone: string;
-  email: string;
-  // Escolaridade
-  instituicaoEnsino: string;
-  periodo: Alunos.Types.PeriodoEnsino;
-  ano: string;
-  // Demais Informações
-  graduacaoAtual: string;
-  pesoAtual: number;
-  alturaAtual: number;
-  dataUltimaGraduacao: Date;
-  categoria: string;
-  tipoSanguineo: string;
-  dataFiliacao: Date;
-  situacaoFejur: string;
-  situacaoFbj: string;
-  observacoesMedicas: string;
-  // Mensalidades
-  mensalidades: Alunos.Types.IAlunoMensalidade[];
-  // Administrativo
-  inativo: boolean;
-  dataRegistro: Date;
-  usuario: IUserModel
-}
-
 
 export const ALUNO_MODEL_NAME = 'alunos';
 // Endereços
@@ -342,7 +255,7 @@ const alunoCRUDSchema = new mongoose.Schema({
   }
 });
 
-export const AlunoCRUDModel = mongoose.model<IAlunoModel>(
+export const AlunoCRUDModel = mongoose.model<Alunos.Types.IAlunoModel>(
   ALUNO_MODEL_NAME,
   alunoCRUDSchema,
   ALUNO_MODEL_NAME
