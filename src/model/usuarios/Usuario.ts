@@ -18,7 +18,7 @@ export interface IUserNovoModel extends mongoose.Document {
   email: string;
   senha: string;
   logoEmpresa?: string;
-  codigoConfirmacao?:string;
+  codigoConfirmacao?: string;
 }
 
 export interface IUserLoginModel extends mongoose.Document {
@@ -37,7 +37,7 @@ export interface IUserEditarPerfilModel extends mongoose.Document {
 }
 
 export interface IUserEditarSenhaModel extends mongoose.Document {
-  email:string
+  email: string
   senha: string
   confirmacaoSenha: string
 }

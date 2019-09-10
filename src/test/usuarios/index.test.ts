@@ -7,19 +7,21 @@ const CONTROLLER = "usuarios";
 let token = null;
 let idUsuario = null;
 
-describe("CRUD de usuário", () => {
+describe("Testando endpoints de usuário", () => {
     let objTeste = {
         nome: "Teste",
+        sobrenome: "Da Silva",
         email: "email@email.com",
-        senha: "senha"
+        senha: "senha",
+        senhaAConfirmar: "senha"
     } as IUserModel;
 
 
     describe("#Inserindo", () => {
-        it("Inserindo o usuário", done => {
+        it("Inserindo o usuário normalmente", done => {
             request.post(
                 {
-                    url: `${TEST_BASE_URL}/${CONTROLLER}`,
+                    url: `${TEST_BASE_URL}/${CONTROLLER}/novo`,
                     form: objTeste
                 }, function (err, httpResponse, body) {
                     if (err) {
@@ -35,7 +37,7 @@ describe("CRUD de usuário", () => {
 
     describe("#Login", () => {
         it("Fazendo login de usuário (Login correto)", done => {
-            let objLogin = {email : objTeste.email, senha : objTeste.senha};
+            let objLogin = { email: objTeste.email, senha: objTeste.senha };
 
             request.post(
                 {
@@ -49,11 +51,10 @@ describe("CRUD de usuário", () => {
                     expect(httpResponse.statusCode, "Login deu certo?").to.equal(200)
                     token = JSON.parse(body).token
                     done()
-                    console.log(token)
                 })
         })
         it("Fazendo login de usuário (Login errado)", done => {
-            let objLogin = {email : objTeste.email, senha : "Uma senha errada qualquer"};
+            let objLogin = { email: objTeste.email, senha: "Uma senha errada qualquer" };
 
             request.post(
                 {
@@ -66,45 +67,37 @@ describe("CRUD de usuário", () => {
         })
     })
 
-    
     describe("#Alterando", () => {
-        it("Alterando o usuário", done => {
+        it("Alterando perfil", done => {
             request.post(
                 {
-                    url: `${TEST_BASE_URL}/${CONTROLLER}`,
-                    form: {...objTeste, _id : idUsuario},
-                    auth:{
+                    url: `${TEST_BASE_URL}/${CONTROLLER}/editar-perfil`,
+                    form: { ...objTeste, _id: idUsuario },
+                    auth: {
                         bearer: token
                     }
                 }, function (err, httpResponse, body) {
                     if (err) {
                         done(err)
                     }
-                    expect(httpResponse.statusCode, "Alterou o usuário?").to.equal(200)
+                    expect(httpResponse.statusCode, "Alterou o perfil?").to.equal(200)
                     done()
                 })
         })
-    })
-
-    describe("#Listando", () => {
-        it("Gerando listagem de usuário", done => {
-
-            request.get(
+        it("Alterando senha", done => {
+            request.post(
                 {
-                    url: `${TEST_BASE_URL}/${CONTROLLER}`,
-                    auth:{
+                    url: `${TEST_BASE_URL}/${CONTROLLER}/editar-senha`,
+                    form: { ...objTeste, _id: idUsuario },
+                    auth: {
                         bearer: token
                     }
                 }, function (err, httpResponse, body) {
                     if (err) {
                         done(err)
                     }
-
-                    expect(httpResponse.statusCode, "Listou corretamente?").to.equal(200)
+                    expect(httpResponse.statusCode, "Alterou senha?").to.equal(200)
                     done()
-                    let lista = JSON.parse(body) as IUserModel[];
-                    
-                    console.log(lista.map(item => item.nome).join(","))
                 })
         })
     })
@@ -113,8 +106,8 @@ describe("CRUD de usuário", () => {
         it("Removendo o usuário", done => {
             request.delete(
                 {
-                    url: `${TEST_BASE_URL}/${CONTROLLER}/${idUsuario}`,
-                    auth:{
+                    url: `${TEST_BASE_URL}/${CONTROLLER}/current-user`,
+                    auth: {
                         bearer: token
                     }
                 }, function (err, httpResponse, body) {

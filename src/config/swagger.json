@@ -1,0 +1,708 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Warrior - Backend",
+    "description": "Esta é a documentação da API do sistema Warrior. Versão base",
+    "contact": {
+      "email": "igor.mcbueno@gmail.com"
+    },
+    "version": "1.0.1"
+  },
+  "servers": [
+    {
+      "url": "https://warrior-backend.appspot.com"
+    }
+  ],
+  "tags": [
+    {
+      "name": "usuarios",
+      "description": "Controle de usuários"
+    },
+    {
+      "name": "alunos",
+      "description": "Controle de alunos"
+    },
+    {
+      "name": "turmas",
+      "description": "Controle de turmas"
+    }
+  ],
+  "paths": {
+    "/usuarios/novo": {
+      "post": {
+        "tags": [
+          "usuarios"
+        ],
+        "summary": "Cria um novo usuário no DB",
+        "description": "A partir desse controlador é possível criar um novo usuário no sistema. Para confirmar a criação será enviado um e-mail a ele.",
+        "operationId": "addUser",
+        "requestBody": {
+          "description": "Informações básicas do usuário.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCRUD"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Falta algum campo ou algo está fora do estabelecido."
+          },
+          "500": {
+            "description": "Acontece quando ocorre um erro interno no servidor."
+          }
+        }
+      }
+    },
+    "/usuarios/editar-perfil": {
+      "post": {
+        "tags": [
+          "usuarios"
+        ],
+        "summary": "Edita o perfil de um usuário existente",
+        "operationId": "editarPerfilUser",
+        "requestBody": {
+          "description": "Id do usuário e demais dados cadastrais.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserEditarPerfil"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Falta algum campo ou algo está fora do estabelecido."
+          },
+          "401": {
+            "description": "Não autorizado."
+          },
+          "500": {
+            "description": "Acontece quando ocorre um erro interno no servidor."
+          }
+        }
+      }
+    },
+    "/usuarios/editar-senha": {
+      "post": {
+        "tags": [
+          "usuarios"
+        ],
+        "summary": "Edita a senha de um usuário existente",
+        "operationId": "editarSenhaUser",
+        "requestBody": {
+          "description": "Informações para a edição da senha.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserEditarSenha"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Falta algum campo ou algo está fora do estabelecido."
+          },
+          "401": {
+            "description": "Não autorizado."
+          },
+          "500": {
+            "description": "Acontece quando ocorre um erro interno no servidor."
+          }
+        }
+      }
+    },
+    "/usuarios/authenticate": {
+      "post": {
+        "tags": [
+          "usuarios"
+        ],
+        "summary": "Faz o login e retorna o token de usuário",
+        "operationId": "fazerLoginUser",
+        "requestBody": {
+          "description": "Informações para o login.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLogin"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Falta algum campo ou algo está fora do estabelecido."
+          },
+          "401": {
+            "description": "Não autorizado."
+          },
+          "500": {
+            "description": "Acontece quando ocorre um erro interno no servidor."
+          }
+        }
+      }
+    },
+    "/usuarios/current-user": {
+      "get": {
+        "tags": [
+          "usuarios"
+        ],
+        "summary": "Retorna o usuário atual. Busca a partir do token Bearer",
+        "operationId": "buscaCurrentUser",
+        "responses": {
+          "400": {
+            "description": "Falta algum campo ou algo está fora do estabelecido."
+          },
+          "401": {
+            "description": "Não autorizado ou o token não foi passado."
+          },
+          "500": {
+            "description": "Acontece quando ocorre um erro interno no servidor."
+          }
+        }
+      },
+      "delete": {
+        "security": {
+          "bearerAuth": []
+        },
+        "tags": [
+          "usuarios"
+        ],
+        "summary": "Remove o usuário atual. Busca a partir do token Bearer",
+        "operationId": "removeCurrentUser",
+        "responses": {
+          "400": {
+            "description": "Falta algum campo ou algo está fora do estabelecido."
+          },
+          "401": {
+            "description": "Não autorizado ou o token não foi passado."
+          },
+          "500": {
+            "description": "Acontece quando ocorre um erro interno no servidor."
+          }
+        }
+      }
+    },
+    "/alunos": {
+      "post": {
+        "tags": [
+          "alunos"
+        ],
+        "summary": "Insere/Altera o usuário. Se tiver o _id altera, do contrário insere.",
+        "operationId": "salvarAluno",
+        "requestBody": {
+          "description": "Objeto para submissão.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AlunoCRUD"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Falta algum campo ou algo está fora do estabelecido."
+          },
+          "401": {
+            "description": "Não autorizado."
+          },
+          "500": {
+            "description": "Acontece quando ocorre um erro interno no servidor."
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "alunos"
+        ],
+        "summary": "Busca todos os alunos.",
+        "operationId": "buscarTodosAlunos",
+        "responses": {
+          "400": {
+            "description": "Falta algum campo ou algo está fora do estabelecido."
+          },
+          "401": {
+            "description": "Não autorizado."
+          },
+          "500": {
+            "description": "Acontece quando ocorre um erro interno no servidor."
+          }
+        }
+      }
+    },
+    "/alunos/:id": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "ID do registro"
+          }
+        ],
+        "tags": [
+          "alunos"
+        ],
+        "summary": "Busca um aluno por ID",
+        "operationId": "buscarAlunoPorId",
+        "responses": {
+          "400": {
+            "description": "Falta algum campo ou algo está fora do estabelecido."
+          },
+          "401": {
+            "description": "Não autorizado."
+          },
+          "500": {
+            "description": "Acontece quando ocorre um erro interno no servidor."
+          }
+        }
+      },
+      "delete": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "ID do registro"
+          }
+        ],
+        "tags": [
+          "alunos"
+        ],
+        "summary": "Remove um aluno por ID.",
+        "operationId": "removerAlunoPorId",
+        "responses": {
+          "400": {
+            "description": "Falta algum campo ou algo está fora do estabelecido."
+          },
+          "401": {
+            "description": "Não autorizado."
+          },
+          "500": {
+            "description": "Acontece quando ocorre um erro interno no servidor."
+          }
+        }
+      }
+    },
+    "/alunos/buscar": {
+      "post": {
+        "tags": [
+          "alunos"
+        ],
+        "summary": "Busca alunos a partir de um objeto chave/valor com cada field.",
+        "operationId": "buscaAvancadaAluno",
+        "requestBody": {
+          "description": "Manda o objeto na mesma estrutura da model (mas só coloca as propriedades que você quer buscar. Não funciona com field arrays).",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AlunoCRUD"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Falta algum campo ou algo está fora do estabelecido."
+          },
+          "401": {
+            "description": "Não autorizado."
+          },
+          "500": {
+            "description": "Acontece quando ocorre um erro interno no servidor."
+          }
+        }
+      }
+    },
+    "/turmas": {
+      "post": {
+        "tags": [
+          "turmas"
+        ],
+        "summary": "Insere/altera uma turma. Se tiver o Id altera, do contrário insere.",
+        "operationId": "salvarTurmas",
+        "requestBody": {
+          "description": "Corpo da requisição.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TurmaCRUD"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Falta algum campo ou algo está fora do estabelecido."
+          },
+          "401": {
+            "description": "Não autorizado."
+          },
+          "500": {
+            "description": "Acontece quando ocorre um erro interno no servidor."
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "turmas"
+        ],
+        "summary": "Busca todas as turmas.",
+        "operationId": "buscarTodasAsTurmas",
+        "responses": {
+          "400": {
+            "description": "Falta algum campo ou algo está fora do estabelecido."
+          },
+          "401": {
+            "description": "Não autorizado."
+          },
+          "500": {
+            "description": "Acontece quando ocorre um erro interno no servidor."
+          }
+        }
+      }
+    },
+    "/turmas/:id": {
+      "get": {
+        "tags": [
+          "turmas"
+        ],
+        "summary": "Busca uma turma por id.",
+        "operationId": "buscarTurmaPorId",
+        "responses": {
+          "400": {
+            "description": "Falta algum campo ou algo está fora do estabelecido."
+          },
+          "401": {
+            "description": "Não autorizado."
+          },
+          "500": {
+            "description": "Acontece quando ocorre um erro interno no servidor."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "turmas"
+        ],
+        "summary": "Deleta uma turma por id.",
+        "operationId": "removeTurmaPorId",
+        "responses": {
+          "400": {
+            "description": "Falta algum campo ou algo está fora do estabelecido."
+          },
+          "401": {
+            "description": "Não autorizado."
+          },
+          "500": {
+            "description": "Acontece quando ocorre um erro interno no servidor."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "UserCRUD": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string"
+          },
+          "sobrenome": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "senha": {
+            "type": "string"
+          },
+          "logoEmpresa": {
+            "type": "string",
+            "description": "Imagem Base64"
+          }
+        }
+      },
+      "UserEditarPerfil": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string"
+          },
+          "sobrenome": {
+            "type": "string"
+          },
+          "logoEmpresa": {
+            "type": "string"
+          }
+        }
+      },
+      "UserEditarSenha": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "senha": {
+            "type": "string"
+          },
+          "confirmacaoSenha": {
+            "type": "string"
+          }
+        }
+      },
+      "UserLogin": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "senha": {
+            "type": "string"
+          }
+        }
+      },
+      "TurmaCRUD": {
+        "type": "object",
+        "properties": {
+          "_id": "string",
+          "usuario": "string",
+          "alunos": "array",
+          "arteMarcial": "string",
+          "localTreino": "string",
+          "colaboradores": "array"
+        }
+      },
+      "AlunoCRUD": {
+        "type": "object",
+        "properties": {
+          "_id": "string",
+          "nome": {
+            "type": "string"
+          },
+          "dataNascimento": {
+            "type": "string"
+          },
+          "cpf": {
+            "type": "string"
+          },
+          "rg": {
+            "type": "string"
+          },
+          "orgaoEmissor": {
+            "type": "string"
+          },
+          "dataExpedicao": {
+            "type": "string"
+          },
+          "sexo": {
+            "type": "integer",
+            "enum": [
+              "Masculino",
+              "Feminino"
+            ]
+          },
+          "nacionalidade": {
+            "type": "string"
+          },
+          "naturalidade": {
+            "type": "string"
+          },
+          "numeroZempo": {
+            "type": "string"
+          },
+          "numeroFiliacao": {
+            "type": "string"
+          },
+          "situacaoCbj": {
+            "type": "integer",
+            "enum": [
+              "Regular",
+              "Pendente",
+              "Irregular"
+            ]
+          },
+          "responsaveis": {
+            "type": "array",
+            "items": {
+              "oneOf": {
+                "nome": {
+                  "type": "string"
+                },
+                "cpf": {
+                  "type": "string"
+                },
+                "rg": {
+                  "type": "string"
+                },
+                "orgaoEmissor": {
+                  "type": "string"
+                },
+                "dataExpedicao": {
+                  "type": "string"
+                },
+                "telefone": {
+                  "type": "string"
+                },
+                "nivelParentesco": {
+                  "type": "integer",
+                  "enum": [
+                    "Pai",
+                    "Mãe",
+                    "Irmão",
+                    "Outro familiar",
+                    "Apenas responsável"
+                  ]
+                },
+                "observacao": "string"
+              }
+            }
+          },
+          "endereco": {
+            "logradouro": {
+              "type": "string"
+            },
+            "numero": {
+              "type": "string"
+            },
+            "bairro": {
+              "type": "string"
+            },
+            "cidade": {
+              "type": "string"
+            },
+            "cep": {
+              "type": "string"
+            },
+            "uf": {
+              "type": "string"
+            }
+          },
+          "telefone": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "instituicaoEnsino": {
+            "type": "string"
+          },
+          "periodo": {
+            "type": "integer",
+            "enum": [
+              "Matutino",
+              "Vespertino",
+              "Noturno"
+            ]
+          },
+          "ano": {
+            "type": "string"
+          },
+          "graduacaoAtual": {
+            "type": "string"
+          },
+          "pesoatual": {
+            "type": "integer"
+          },
+          "alturaAtual": {
+            "type": "integer"
+          },
+          "dataUltimaGraduacao": {
+            "type": "string"
+          },
+          "categoria": {
+            "type": "string"
+          },
+          "tipoSanguineo": {
+            "type": "string"
+          },
+          "dataFiliacao": {
+            "type": "string"
+          },
+          "situacaoFejur": {
+            "type": "string"
+          },
+          "situacaoFbj": {
+            "type": "string"
+          },
+          "observacoesMedicas": {
+            "type": "string"
+          },
+          "mensalidades": [
+            {
+              "observacoes": {
+                "type": "string"
+              },
+              "situacao": {
+                "type": "string",
+                "required": true,
+                "enum": [
+                  "Aberta",
+                  "Fechada",
+                  "Cancelada"
+                ]
+              },
+              "formasPagamento": [
+                {
+                  "descricao": {
+                    "type": "string"
+                  },
+                  "formaPagamento": {
+                    "type": "string",
+                    "enum": [
+                      "Dinheiro",
+                      "Cartão de crédito",
+                      "Cartão de débito",
+                      "Cheque",
+                      "Transferência eletrônica"
+                    ]
+                  },
+                  "valor": {
+                    "type": "double"
+                  }
+                }
+              ],
+              "data": {
+                "type": "string"
+              }
+            }
+          ],
+          "inativo": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
+}

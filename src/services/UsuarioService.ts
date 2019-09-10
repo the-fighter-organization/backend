@@ -25,7 +25,7 @@ export default class UsuarioService {
       model = await model.save();
 
       if (model === null) {
-        throw 'Usuário não criado!'
+        throw new Error('Usuário não criado!')
       }
 
       var transporter = createTransport({
@@ -47,11 +47,23 @@ export default class UsuarioService {
 
       const emailResponse = await transporter.sendMail(mailOptions);
 
-      const {senha, senhaAConfirmar, logoEmpresa, codigoConfirmacao, ...response} = model.toObject();
+      const { senha, senhaAConfirmar, logoEmpresa, codigoConfirmacao, ...response } = model.toObject();
 
       return res.status(200).json({ response, emailResponse });
 
     } catch (error) {
+      if (!error) {
+        return res.status(500).json("Ocorreu um erro interno no servidor");
+      }
+      // validando erros
+      if (error.code === 11000) {
+        return res.status(400).json({ error: "Este e-mail já está sendo usado por outra conta!" })
+      }
+      if (error.code === "ESOCKET" && error.errno === "ETIMEDOUT") {
+        await UserCRUDModel.findOneAndRemove({ _id: model._id })
+        return res.status(500).json({ error: "Não foi possível enviar o e-mail ao usuário. A operação foi cancelada!" })
+      }
+
       return res.status(500).json({ error });
     }
   }
@@ -143,7 +155,7 @@ export default class UsuarioService {
         throw "Registro a confirmar não encontrado!";
       }
 
-      if(obj.senhaAConfirmar){
+      if (obj.senhaAConfirmar) {
         obj.senha = obj.senhaAConfirmar;
         obj.senhaAConfirmar = null;
       }
@@ -151,7 +163,7 @@ export default class UsuarioService {
       obj.codigoConfirmacao = null;
       const model = await obj.save();
 
-      const {senha, senhaAConfirmar, logoEmpresa, codigoConfirmacao : confirmacao, ...response} = model.toObject();
+      const { senha, senhaAConfirmar, logoEmpresa, codigoConfirmacao: confirmacao, ...response } = model.toObject();
 
       return res.status(200).json(response);
     }

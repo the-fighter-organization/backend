@@ -25,6 +25,8 @@
     "@types/passport": "^1.0.0",
     "@types/passport-http-bearer": "^1.0.33",
     "@types/request": "^2.48.1",
+    "@types/swagger-ui-express": "^3.0.1",
+    "@types/yamljs": "^0.2.30",
     "chai": "^4.2.0",
     "mocha": "^6.1.4",
     "request": "^2.88.0",
@@ -32,7 +34,7 @@
     "typescript": "^3.3.3333"
   },
   "engines": {
-    "node":"10.X"
+    "node": "10.X"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
@@ -44,6 +46,8 @@
     "morgan": "^1.9.1",
     "nodemailer": "^6.3.0",
     "passport": "^0.4.0",
-    "passport-http-bearer": "^1.0.1"
+    "passport-http-bearer": "^1.0.1",
+    "swagger-ui-express": "^4.0.7",
+    "yamljs": "^0.3.0"
   }
 }
