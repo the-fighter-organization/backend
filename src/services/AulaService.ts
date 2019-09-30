@@ -81,11 +81,12 @@ export default class TurmaService implements IReadOnlyService, IEditService {
   async findAll(req: express.Request, res: express.Response) {
     try {
       const results = await TurmaCRUDModel.find({ usuario: getUserIdFromRequest(req) });
+      console.log(results)
       const aulas = results
         .map(turma => (
           (turma.toObject() as Turmas.ITurmaModel).aulas.map(aula => ({ ...aula, turmaId: turma._id })))
         )
-        .reduce((previus, current) => [...previus, ...current]);
+        .reduce((previus, current) => [...previus, ...current], []);
       return res.status(200).json(aulas);
     } catch (error) {
       return res.status(500).json(error)
