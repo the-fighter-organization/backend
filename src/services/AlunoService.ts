@@ -32,7 +32,7 @@ export default class AlunoService implements IReadOnlyService, IEditService {
       }
       return res.status(200).json(model);
     } catch (error) {
-      return res.status(500).json({ error });
+      return res.status(500).json(error);
     }
   }
 
@@ -44,7 +44,7 @@ export default class AlunoService implements IReadOnlyService, IEditService {
       let q = await AlunoCRUDModel.findOneAndRemove({ _id: req.params.id, usuario: getUserIdFromRequest(req) });
       return res.status(200).json(q);
     } catch (error) {
-      return res.status(500).json({ error });
+      return res.status(500).json(error);
     }
   }
 

@@ -24,6 +24,10 @@ const AulaSchema = new mongoose.Schema<Turmas.IAulaModel>({
 });
 
 const TurmaSchema = new mongoose.Schema<Turmas.ITurmaModel>({
+  nome: {
+    type: String,
+    required: true
+  },
   arteMarcial: {
     type: String,
     required: true
@@ -40,6 +44,13 @@ const TurmaSchema = new mongoose.Schema<Turmas.ITurmaModel>({
     type: mongoose.Schema.Types.ObjectId,
     ref: USER_MODEL_NAME,
     required: [true, 'O usuário criador é requerido!']
+  },
+  //Funções administrativas
+  inativo: Boolean,
+  dataRegistro: {
+    type: Date,
+    required: true,
+    default: new Date()
   }
 })
 
