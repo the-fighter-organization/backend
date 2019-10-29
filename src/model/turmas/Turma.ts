@@ -5,11 +5,15 @@ import { USER_MODEL_NAME } from '../usuarios/Usuario';
 
 const TURMA_MODEL_NAME = "turmas";
 
-const AlunoPresencaSchema = new mongoose.Schema<Turmas.ITurmaModel>({
+const AlunoPresencaSchema = new mongoose.Schema({
   aluno: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ALUNO_MODEL_NAME,
     required: [true, 'O aluno dessa presença é requerido!']
+  },
+  presente: {
+    type: Boolean,
+    required: [true, 'O campo "Presente" é requerido!']
   },
   observacoesPositivas: [String],
   observacoesNegativas: [String],
@@ -19,11 +23,12 @@ const AlunoPresencaSchema = new mongoose.Schema<Turmas.ITurmaModel>({
 const AulaSchema = new mongoose.Schema<Turmas.IAulaModel>({
   dataRegistro: { type: Date, required: true },
   dataAula: { type: Date, required: true },
-  dataChamada: { type: Date, required: true },
-  presencas: [AlunoPresencaSchema]
+  dataChamada: { type: Date },
+  presencas: [AlunoPresencaSchema],
+  planoAula: [String]
 });
 
-const TurmaSchema = new mongoose.Schema<Turmas.ITurmaModel>({
+const TurmaSchema = new mongoose.Schema<Turmas.ITurmaModelRequest>({
   nome: {
     type: String,
     required: true
@@ -40,6 +45,7 @@ const TurmaSchema = new mongoose.Schema<Turmas.ITurmaModel>({
     type: String
   }],
   aulas: [AulaSchema],
+  alunos: [{ type: mongoose.Schema.Types.ObjectId, ref: ALUNO_MODEL_NAME, }],
   usuario: {
     type: mongoose.Schema.Types.ObjectId,
     ref: USER_MODEL_NAME,
@@ -54,7 +60,7 @@ const TurmaSchema = new mongoose.Schema<Turmas.ITurmaModel>({
   }
 })
 
-export const TurmaCRUDModel = mongoose.model<Turmas.ITurmaModel>(
+export const TurmaCRUDModel = mongoose.model<Turmas.ITurmaModelRequest>(
   TURMA_MODEL_NAME,
   TurmaSchema,
   TURMA_MODEL_NAME

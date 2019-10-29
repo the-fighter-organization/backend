@@ -8,7 +8,8 @@ export default class DatabaseConfig {
                 {
                     useNewUrlParser: true,
                     useCreateIndex: true,
-                    useFindAndModify: true
+                    useFindAndModify: true,
+                    useUnifiedTopology: true
                 })
             .then(res => {
                 console.log("Conectado com sucesso!")

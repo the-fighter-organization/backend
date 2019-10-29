@@ -1,8 +1,9 @@
-import IReadOnlyService, { IBuscaParameters } from "./types/IReadOnlyService";
-import IEditService from "./types/IEditService";
-import * as express from "express";
-import { getUserIdFromRequest } from "../util/userModelShortcuts";
+import * as express from 'express';
+
 import { TurmaCRUDModel } from '../model/turmas/Turma';
+import { getUserIdFromRequest } from '../util/userModelShortcuts';
+import IEditService from './types/IEditService';
+import IReadOnlyService, { IBuscaParameters } from './types/IReadOnlyService';
 
 export default class TurmaService implements IReadOnlyService, IEditService {
   async save(req: express.Request, res: express.Response) {
@@ -87,7 +88,8 @@ export default class TurmaService implements IReadOnlyService, IEditService {
 
   async findOne(req: express.Request, res: express.Response) {
     try {
-      let result = await TurmaCRUDModel.findOne({ _id: req.params.id, usuario: getUserIdFromRequest(req) })
+      let result = await TurmaCRUDModel
+        .findOne({ _id: req.params.id, usuario: getUserIdFromRequest(req) });
 
       if (result) {
         return res.status(200).json(result)

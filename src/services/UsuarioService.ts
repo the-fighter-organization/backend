@@ -150,7 +150,6 @@ export default class UsuarioService {
       const { id, codigoConfirmacao } = req.params;
       let obj = await UserCRUDModel.findOne({ _id: id, codigoConfirmacao });
 
-      console.log(obj)
       if (!obj || !obj._id) {
         throw "Registro a confirmar não encontrado!";
       }

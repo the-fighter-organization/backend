@@ -9,8 +9,8 @@ const secureRoute = passport.authenticate('bearer', { session: false })
 
 export default class AulaController {
   static config() {
-    router.post("/:turmaId", secureRoute, service.save);
     router.post("/buscar", secureRoute, service.find);
+    router.post("/:turmaId", secureRoute, service.save);
     router.get("/", secureRoute, service.findAll);
     router.get("/:turmaId/:id", secureRoute, service.findOne);
     router.delete("/:turmaId/:id", secureRoute, service.remove);

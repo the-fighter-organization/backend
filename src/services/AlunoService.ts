@@ -1,4 +1,4 @@
-import IReadOnlyService from "./types/IReadOnlyService";
+import IReadOnlyService, { IBuscaParameters } from "./types/IReadOnlyService";
 import IEditService from "./types/IEditService";
 import * as express from "express";
 import { AlunoCRUDModel } from "../model/alunos/Aluno";
@@ -58,19 +58,23 @@ export default class AlunoService implements IReadOnlyService, IEditService {
   }
 
   async find(req: express.Request, res: express.Response) {
+    const { filters, select } = req.body as IBuscaParameters;
     try {
       let query = AlunoCRUDModel.find({ usuario: getUserIdFromRequest(req) })
 
-      const obj = req.body;
-      const keys = Object.keys(obj);
+      const keys = filters ? Object.keys(filters) : [];
 
       keys.forEach(key => {
-        if (typeof obj[key] === "string") {
-          query.where(key, new RegExp(obj[key], 'i'));
+        if (typeof filters[key] === "string") {
+          query.where(key, new RegExp(filters[key], 'i'));
         } else {
-          query.where(key, obj[key])
+          query.where(key, filters[key])
         }
       });
+
+      if (select) {
+        query.select(select);
+      }
 
       const results = await query.exec();
 

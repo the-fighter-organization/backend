@@ -1,15 +1,17 @@
-import IReadOnlyService, { IBuscaParameters } from "./types/IReadOnlyService";
-import IEditService from "./types/IEditService";
-import * as express from "express";
-import { getUserIdFromRequest } from "../util/userModelShortcuts";
+import * as express from 'express';
+
 import { TurmaCRUDModel } from '../model/turmas/Turma';
 import { Turmas } from '../model/turmas/types';
+import { getUserIdFromRequest } from '../util/userModelShortcuts';
+import IEditService from './types/IEditService';
+import IReadOnlyService, { IBuscaParameters } from './types/IReadOnlyService';
 
-export default class TurmaService implements IReadOnlyService, IEditService {
+export default class AulaService implements IReadOnlyService, IEditService {
   async save(req: express.Request, res: express.Response) {
     try {
       // preenchendo model
       let model = await TurmaCRUDModel.findOne({ _id: req.params.turmaId, usuario: getUserIdFromRequest(req) })
+      let indexAula = null;
 
       if (!model) {
         return res.status(404).json({ message: "A turma da aula não existe!" })
@@ -23,8 +25,11 @@ export default class TurmaService implements IReadOnlyService, IEditService {
         }
 
         model.aulas.splice(index, 1, req.body)
+        indexAula = index;
       }
       else {
+        req.body.dataRegistro = new Date();
+        indexAula = model.aulas.length + 1;
         model.aulas.push(req.body)
       }
 
@@ -40,7 +45,7 @@ export default class TurmaService implements IReadOnlyService, IEditService {
         return res.status(400).json({ message: "A alteração do aluno resultou em erro" } as Error)
       }
 
-      return res.status(200).json(model);
+      return res.status(200).json(model.aulas[indexAula]);
     } catch (error) {
       return res.status(500).json(error);
     }
@@ -50,6 +55,9 @@ export default class TurmaService implements IReadOnlyService, IEditService {
   async remove(req: express.Request, res: express.Response) {
     if (!req.params.id) {
       return res.status(400).json({ message: "Não foi possível excluir, o id não foi informado!" });
+    }
+    if (!req.params.turmaId) {
+      return res.status(400).json({ message: "Não foi possível excluir, o id da turma não foi informado!" });
     }
 
     let model = await TurmaCRUDModel.findOne({ _id: req.params.turmaId, usuario: getUserIdFromRequest(req) })
@@ -81,10 +89,9 @@ export default class TurmaService implements IReadOnlyService, IEditService {
   async findAll(req: express.Request, res: express.Response) {
     try {
       const results = await TurmaCRUDModel.find({ usuario: getUserIdFromRequest(req) });
-      console.log(results)
       const aulas = results
         .map(turma => (
-          (turma.toObject() as Turmas.ITurmaModel).aulas.map(aula => ({ ...aula, turmaId: turma._id })))
+          (turma.toObject() as Turmas.ITurmaModelRequest).aulas.map(aula => ({ ...aula, turma: { nome: turma.nome, _id: turma._id } })))
         )
         .reduce((previus, current) => [...previus, ...current], []);
       return res.status(200).json(aulas);
@@ -94,12 +101,11 @@ export default class TurmaService implements IReadOnlyService, IEditService {
   }
 
   async find(req: express.Request, res: express.Response) {
-    const { filters, select } = req.body as IBuscaParameters;
+    const { filters } = req.body as IBuscaParameters;
     try {
       let query = TurmaCRUDModel.find({ usuario: getUserIdFromRequest(req) })
 
       const keys = filters ? Object.keys(filters) : [];
-
       keys.forEach(key => {
         if (typeof filters[key] === "string") {
           query.where(key, new RegExp(filters[key], 'i'));
@@ -108,13 +114,12 @@ export default class TurmaService implements IReadOnlyService, IEditService {
         }
       });
 
-      if (select) {
-        query.select(select);
-      }
-
       const results = await query.exec();
+      const aulas = results.map(turma => (
+        (turma.toObject() as Turmas.ITurmaModelRequest).aulas.map(aula => ({ ...aula, turma: { nome: turma.nome, _id: turma._id } })))
+      ).reduce((previus, current) => [...previus, ...current], []);
 
-      return res.status(200).json(results);
+      return res.status(200).json(aulas);
     } catch (error) {
       return res.status(500).json(error)
     }
@@ -128,9 +133,9 @@ export default class TurmaService implements IReadOnlyService, IEditService {
         return res.status(404).json({ message: "A turma da aula solicitada não existe!" })
       }
 
-      console.log(turma.aulas)
-      console.log(req.params.id)
-      const aula = turma.aulas.find(q => q._id == req.params.id);
+      let aula = (turma.aulas.find(q => q._id == req.params.id) as any).toObject();
+      aula.turma = turma.toObject();
+      aula.turmaId = turma._id;
 
       if (!aula) {
         return res.status(404).json({ message: "A aula solicitada não existe!" })
