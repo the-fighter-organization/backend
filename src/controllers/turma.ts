@@ -1,14 +1,13 @@
-import * as express from 'express';
-import * as passport from 'passport';
-
-import AlunoService from '../services/AlunoService';
+import * as express from "express";
+import * as passport from 'passport'
+import TurmaService from '../services/TurmaService';
 
 const router = express.Router();
-const service = new AlunoService();
+const service = new TurmaService();
 
 const secureRoute = passport.authenticate('bearer', { session: false })
 
-export default class AlunoController {
+export default class TurmaController {
   static config() {
     router.post("/", secureRoute, service.save);
     router.post("/buscar", secureRoute, service.find);

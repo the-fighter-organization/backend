@@ -1,13 +1,14 @@
-import IReadOnlyService, { IBuscaParameters } from "./types/IReadOnlyService";
-import IEditService from "./types/IEditService";
-import * as express from "express";
-import { AlunoCRUDModel } from "../model/alunos/Aluno";
-import { getUserIdFromRequest } from "../util/userModelShortcuts";
+import * as express from 'express';
 
-export default class AlunoService implements IReadOnlyService, IEditService {
+import { TurmaCRUDModel } from '../model/turmas/Turma';
+import { getUserIdFromRequest } from '../util/userModelShortcuts';
+import IEditService from './types/IEditService';
+import IReadOnlyService, { IBuscaParameters } from './types/IReadOnlyService';
+
+export default class TurmaService implements IReadOnlyService, IEditService {
   async save(req: express.Request, res: express.Response) {
     // preenchendo model
-    let model = new AlunoCRUDModel(req.body);
+    let model = new TurmaCRUDModel(req.body);
     model.usuario = getUserIdFromRequest(req);
 
     // validando
@@ -21,36 +22,37 @@ export default class AlunoService implements IReadOnlyService, IEditService {
       if (!req.body._id) {
         model = await model.save();
       } else {
-        model = await AlunoCRUDModel.findOneAndUpdate(
+        model = await TurmaCRUDModel.findOneAndUpdate(
           { _id: req.body._id, usuario: model.usuario },
           model,
           { new: true })
       }
 
       if (!model) {
-        return res.status(400).json({ message: "A alteração de usuário resultou em erro" } as Error)
+        return res.status(400).json({ message: "A alteração de turma resultou em erro" } as Error)
       }
       return res.status(200).json(model);
     } catch (error) {
-      return res.status(500).json(error);
+      return res.status(500).json({ error });
     }
   }
+
 
   async remove(req: express.Request, res: express.Response) {
     if (!req.params.id) {
       return res.status(400);
     }
     try {
-      let q = await AlunoCRUDModel.findOneAndRemove({ _id: req.params.id, usuario: getUserIdFromRequest(req) });
+      let q = await TurmaCRUDModel.findOneAndRemove({ _id: req.params.id, usuario: getUserIdFromRequest(req) });
       return res.status(200).json(q);
     } catch (error) {
-      return res.status(500).json(error);
+      return res.status(500).json({ error });
     }
   }
 
   async findAll(req: express.Request, res: express.Response) {
     try {
-      let results = await AlunoCRUDModel.find({ usuario: getUserIdFromRequest(req) })
+      let results = await TurmaCRUDModel.find({ usuario: getUserIdFromRequest(req) })
       return res.status(200).json(results);
     } catch (error) {
       return res.status(500).json(error)
@@ -60,7 +62,7 @@ export default class AlunoService implements IReadOnlyService, IEditService {
   async find(req: express.Request, res: express.Response) {
     const { filters, select } = req.body as IBuscaParameters;
     try {
-      let query = AlunoCRUDModel.find({ usuario: getUserIdFromRequest(req) })
+      let query = TurmaCRUDModel.find({ usuario: getUserIdFromRequest(req) })
 
       const keys = filters ? Object.keys(filters) : [];
 
@@ -86,7 +88,8 @@ export default class AlunoService implements IReadOnlyService, IEditService {
 
   async findOne(req: express.Request, res: express.Response) {
     try {
-      let result = await AlunoCRUDModel.findOne({ _id: req.params.id, usuario: getUserIdFromRequest(req) })
+      let result = await TurmaCRUDModel
+        .findOne({ _id: req.params.id, usuario: getUserIdFromRequest(req) });
 
       if (result) {
         return res.status(200).json(result)

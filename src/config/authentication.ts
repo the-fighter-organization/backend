@@ -25,7 +25,6 @@ export default class AuthConfig {
 
           return cb(null, false);
         } catch (error) {
-          console.log(error)
           return cb(null, false);
         }
       })
