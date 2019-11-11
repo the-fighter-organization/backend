@@ -1,5 +1,3 @@
-import IReadOnlyService, { IBuscaParameters } from "./types/IReadOnlyService";
-import IEditService from "./types/IEditService";
 import * as express from "express";
 import { ConfiguracaoCRUDModel } from "../model/configuracoes/Configuracao";
 import { getUserIdFromRequest } from "../util/userModelShortcuts";

@@ -91,7 +91,7 @@ export default class AulaService implements IReadOnlyService, IEditService {
       const results = await TurmaCRUDModel.find({ usuario: getUserIdFromRequest(req) });
       const aulas = results
         .map(turma => (
-          (turma.toObject() as Turmas.ITurmaModelRequest).aulas.map(aula => ({ ...aula, turma: { nome: turma.nome, _id: turma._id } })))
+          (turma.toObject() as Turmas.ITurmaModel).aulas.map(aula => ({ ...aula, turma: { nome: turma.nome, _id: turma._id } })))
         )
         .reduce((previus, current) => [...previus, ...current], []);
       return res.status(200).json(aulas);
@@ -116,7 +116,7 @@ export default class AulaService implements IReadOnlyService, IEditService {
 
       const results = await query.exec();
       const aulas = results.map(turma => (
-        (turma.toObject() as Turmas.ITurmaModelRequest).aulas.map(aula => ({ ...aula, turma: { nome: turma.nome, _id: turma._id } })))
+        (turma.toObject() as Turmas.ITurmaModel).aulas.map(aula => ({ ...aula, turma: { nome: turma.nome, _id: turma._id } })))
       ).reduce((previus, current) => [...previus, ...current], []);
 
       return res.status(200).json(aulas);

@@ -12,6 +12,7 @@ export default class AlunoController {
   static config() {
     router.post("/", secureRoute, service.save);
     router.post("/buscar", secureRoute, service.find);
+    router.get("/buscar-mensalidades-vencidas", secureRoute, service.findAllMensalidadesVencidas);
     router.get("/", secureRoute, service.findAll);
     router.get("/:id", secureRoute, service.findOne);
     router.delete("/:id", secureRoute, service.remove);

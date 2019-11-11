@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose';
 import { Alunos } from '../alunos/types';
 
 export namespace Turmas {
-  export interface ITurmaModelRequest extends mongoose.Document {
+  export interface ITurmaModel extends mongoose.Document {
     nome: string;
     arteMarcial: string;
     localTreino: string;
@@ -35,7 +35,7 @@ export namespace Turmas {
     dataChamada: Date;
     presencas: IAulaPresencaModel[];
     planoAula: string[];
-    turma?: ITurmaModelRequest;
+    turma?: ITurmaModel;
   }
 
   export interface IAulaPresencaModel {

@@ -1,11 +1,11 @@
 import * as request from 'request'
 import { expect } from 'chai';
 import { TEST_BASE_URL } from '../constants';
-import { Alunos } from '../../model/alunos/types';
+import { Turmas } from '../../model/turmas/types';
 
-const CONTROLLER = "alunos";
+const CONTROLLER = "turmas";
 let token = null;
-let idAluno = null;
+let idTurma = null;
 
 describe("#Login", () => {
   it("Fazendo login de usuário (Login correto)", done => {
@@ -27,43 +27,19 @@ describe("#Login", () => {
   })
 })
 
-describe("CRUD de aluno", () => {
+describe("CRUD de turma", () => {
   let objTeste = {
     "inativo": false,
-    "nacionalidade": "Brasil",
-    "naturalidade": "Brasil",
+    "aulas": [],
+    "colaboradores": ["Igor", "Thiago"],
     "nome": "Igor Matheus Coleto Bueno",
-    "telefone": "69981328015",
-    "dataNascimento": "1999-08-20",
-    "cpf": "03136442202",
-    "rg": "0298036",
-    "dataExpedicao": "2014-06-17",
-    "sexo": "0",
-    "periodo": "0",
-    "responsaveis": [
-      { "nome": "Eclésio Ferreira de Melo Junior", "cpf": "00000000000", "rg": "0000000", "nivelParentesco": "4", "telefone": "69981328015" }
-    ],
-    "endereco": {
-      "logradouro": "São Luiz", "numero": "5662", "cidade": "Vilhena", "cep": "76988009", "uf": "RO", "bairro": "Bairro de teste"
-    },
-    "numeroZempo": "123",
-    "numeroFiliacao": "12332",
-    "graduacaoAtual": "GADO",
-    "pesoAtual": 85,
-    "alturaAtual": 1.85,
-    "dataUltimaGraduacao": "2019-06-11",
-    "categoria": "GADO",
-    "dataFiliacao": "2019-11-04",
-    "situacaoFejur": "Ok",
-    "situacaoFbj": "OK",
-    "tipoSanguineo": "A+",
-    "observacoesMedicas": "Ok",
-    "mensalidades": [{ "data": "2019-11-05", "situacao": "Fechada", "formasPagamento": [{ "descricao": "Ok", "formaPagamento": "Dinheiro", "valor": 60 }] }]
-  };
+    "arteMarcial": "Judô", "localTreino": "Aqui",
+    "alunos": []
+  }
 
 
   describe("#Inserindo", () => {
-    it("Inserindo o aluno", done => {
+    it("Inserindo o turma", done => {
       request.post(
         {
           url: `${TEST_BASE_URL}/${CONTROLLER}`,
@@ -75,20 +51,20 @@ describe("CRUD de aluno", () => {
           if (err) {
             done(err)
           }
-          expect(httpResponse.statusCode, "Inseriu o aluno?").to.equal(200)
+          expect(httpResponse.statusCode, "Inseriu o turma?").to.equal(200)
           done()
 
-          idAluno = JSON.parse(body)._id
+          idTurma = JSON.parse(body)._id
         })
     })
   })
 
   describe("#Alterando", () => {
-    it("Alterando o aluno", done => {
+    it("Alterando o turma", done => {
       request.post(
         {
           url: `${TEST_BASE_URL}/${CONTROLLER}`,
-          form: { ...objTeste, _id: idAluno },
+          form: { ...objTeste, _id: idTurma },
           auth: {
             bearer: token
           }
@@ -96,14 +72,14 @@ describe("CRUD de aluno", () => {
           if (err) {
             done(err)
           }
-          expect(httpResponse.statusCode, "Alterou o aluno?").to.equal(200)
+          expect(httpResponse.statusCode, "Alterou o turma?").to.equal(200)
           done()
         })
     })
   })
 
   describe("#Listando", () => {
-    it("Gerando listagem de aluno", done => {
+    it("Gerando listagem de turma", done => {
 
       request.get(
         {
@@ -118,7 +94,7 @@ describe("CRUD de aluno", () => {
 
           expect(httpResponse.statusCode, "Listou corretamente?").to.equal(200)
           done()
-          let lista = JSON.parse(body) as Alunos.Types.IAlunoModel[];
+          let lista = JSON.parse(body) as Turmas.ITurmaModel[];
 
           console.log(lista.map(item => item.nome).join(","))
         })
@@ -126,10 +102,10 @@ describe("CRUD de aluno", () => {
   })
 
   describe("#Removendo", () => {
-    it("Removendo o aluno", done => {
+    it("Removendo o turma", done => {
       request.delete(
         {
-          url: `${TEST_BASE_URL}/${CONTROLLER}/${idAluno}`,
+          url: `${TEST_BASE_URL}/${CONTROLLER}/${idTurma}`,
           auth: {
             bearer: token
           }
