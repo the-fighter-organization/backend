@@ -28,7 +28,7 @@ const AulaSchema = new mongoose.Schema<Turmas.IAulaModel>({
   planoAula: [String]
 });
 
-const TurmaSchema = new mongoose.Schema<Turmas.ITurmaModelRequest>({
+const TurmaSchema = new mongoose.Schema<Turmas.ITurmaModel>({
   nome: {
     type: String,
     required: true
@@ -60,7 +60,7 @@ const TurmaSchema = new mongoose.Schema<Turmas.ITurmaModelRequest>({
   }
 })
 
-export const TurmaCRUDModel = mongoose.model<Turmas.ITurmaModelRequest>(
+export const TurmaCRUDModel = mongoose.model<Turmas.ITurmaModel>(
   TURMA_MODEL_NAME,
   TurmaSchema,
   TURMA_MODEL_NAME

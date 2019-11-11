@@ -112,7 +112,7 @@ const mensalidadeSchema = new mongoose.Schema({
   situacao: {
     type: String,
     required: [true, 'A situação da mensalidade é obrigatória!'],
-    enum: ['Aberta', 'Fechada', 'Cancelada']
+    enum: ['Aberta', 'Fechada']
   },
   formasPagamento: [formaPagamentoSchema],
   data: {
@@ -239,14 +239,19 @@ const alunoCRUDSchema = new mongoose.Schema({
   },
   // Mensalidades
   mensalidades: [mensalidadeSchema],
+  bolsista: Boolean,
   // Administrativo
   inativo: {
     type: Boolean,
     default: false
   },
+  ultimaAtivacao: {
+    type: Date,
+    default: new Date()
+  },
   dataRegistro: {
     type: Date,
-    default: new Date(new Date().getUTCDate())
+    default: new Date()
   },
   usuario: {
     type: mongoose.Schema.Types.ObjectId,
@@ -254,6 +259,18 @@ const alunoCRUDSchema = new mongoose.Schema({
     required: [true, 'O usuário criador é requerido!']
   }
 });
+
+//validando formas de pagamento
+alunoCRUDSchema.path("mensalidades").validate((mensalidades: Alunos.Types.IAlunoMensalidade[]) => {
+  if (!mensalidades || !mensalidades.length) return true;
+
+  const valido = mensalidades.map(mensalidade => {
+    if (!mensalidade.formasPagamento || !mensalidade.formasPagamento.length) return false;
+    return true;
+  }).reduce((previus, current) => previus && current, true);
+
+  return valido;
+}, "Cada mensalidade deve ter, pelo menos, uma forma de pagamento")
 
 export const AlunoCRUDModel = mongoose.model<Alunos.Types.IAlunoModel>(
   ALUNO_MODEL_NAME,
