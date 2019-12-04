@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import * as jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 export const USER_MODEL_NAME = "usuarios";
 export const USER_MODEL_LOGIN_NAME = "UsuarioLogin";

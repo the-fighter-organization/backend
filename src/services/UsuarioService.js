@@ -1,4 +1,4 @@
-import * as nodemailer from 'nodemailer';
+import nodemailer from 'nodemailer';
 
 import {
   UserCRUDModel as UserCRUDModel,
@@ -9,24 +9,23 @@ import {
 } from '../model/usuarios/Usuario';
 import { uuidv4 } from '../util/GUID';
 import { getUserIdFromRequest } from '../util/userModelShortcuts';
-
-import CryptoJS from "crypto-js";
+import HmacSHA1 from "crypto-js/hmac-sha1";
 
 export default class UsuarioService {
   async novo(req, res) {
-    const { _id, ...body } = req.body;
-
-    let model = new UserNovoModel(body);
-    let validation = model.validateSync();
-
-    if (validation) {
-      return res.status(400).json({ validation });
-    }
-
-    model.senha = CryptoJS.HmacSHA1(model.senha, process.env.PASSWORD_HASH).toString()
-    model.codigoConfirmacao = uuidv4();
-
     try {
+      const { _id, ...body } = req.body;
+
+      let model = new UserNovoModel(body);
+      let validation = model.validateSync();
+
+      if (validation) {
+        return res.status(400).json({ validation });
+      }
+
+      model.senha = HmacSHA1(model.senha, process.env.PASSWORD_HASH).toString()
+      model.codigoConfirmacao = uuidv4();
+
       model = await model.save();
 
       if (model === null) {
@@ -74,24 +73,24 @@ export default class UsuarioService {
   }
 
   async editarSenha(req, res) {
-    let body = new UserEditarSenhaModel(req.body);
-    let validation = body.validateSync();
-
-    if (validation) {
-      return res.status(400).json({ validation });
-    }
-
-    if (body.senha !== body.confirmacaoSenha) {
-      return res.status(400).json({ error: 'A confirmação de senha está diferente da senha!' })
-    }
-
-    body.senha = CryptoJS.HmacSHA1(body.senha, process.env.PASSWORD_HASH).toString()
-
-    let model = await UserCRUDModel.findOne({ email: body.email });
-    model.codigoConfirmacao = uuidv4();
-    model.senhaAConfirmar = body.senha;
-
     try {
+      let body = new UserEditarSenhaModel(req.body);
+      let validation = body.validateSync();
+
+      if (validation) {
+        return res.status(400).json({ validation });
+      }
+
+      if (body.senha !== body.confirmacaoSenha) {
+        return res.status(400).json({ error: 'A confirmação de senha está diferente da senha!' })
+      }
+
+      body.senha = HmacSHA1(body.senha, process.env.PASSWORD_HASH).toString()
+
+      let model = await UserCRUDModel.findOne({ email: body.email });
+      model.codigoConfirmacao = uuidv4();
+      model.senhaAConfirmar = body.senha;
+
       model = await UserCRUDModel
         .findOneAndUpdate({ _id: model._id }, model, { new: true })
         .select(['-senha', '-senhaAConfirmar', '-logoEmpresa', '-logoEmpresa'])
@@ -127,14 +126,14 @@ export default class UsuarioService {
   }
 
   async editarPerfil(req, res) {
-    let model = new UserEditarPerfilModel({ ...req.body, _id: getUserIdFromRequest(req) });
-    let validation = model.validateSync();
-
-    if (validation) {
-      return res.status(400).json({ validation });
-    }
-
     try {
+      let model = new UserEditarPerfilModel({ ...req.body, _id: getUserIdFromRequest(req) });
+      let validation = model.validateSync();
+
+      if (validation) {
+        return res.status(400).json({ validation });
+      }
+
       model = await UserEditarPerfilModel
         .findOneAndUpdate({ _id: model._id }, model, { new: true })
         .select(['-senha', '-codigoConfirmacao', '-senhaAConfirmar', '-logoEmpresa'])
@@ -177,15 +176,18 @@ export default class UsuarioService {
   }
 
   async authenticate(req, res) {
-    let model = new UserLoginModel(req.body);
-    let validation = model.validateSync();
-
-    if (validation) {
-      return res.status(400).json({ validation });
-    }
-
     try {
-      let senha = CryptoJS.HmacSHA1(model.senha, process.env.PASSWORD_HASH)
+      debugger
+
+      console.log("Antes de criar a model")
+      let model = new UserLoginModel(req.body);
+      let validation = model.validateSync();
+
+      if (validation) {
+        return res.status(400).json({ validation });
+      }
+
+      let senha = HmacSHA1(model.senha, process.env.PASSWORD_HASH)
       let response = await model.authenticate(model.email, senha.toString())
 
       if (!response) {

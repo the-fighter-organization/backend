@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import * as request from 'request';
+import request from 'request';
 
 import { TEST_BASE_URL } from '../constants';
 

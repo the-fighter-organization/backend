@@ -15,7 +15,7 @@ const app = express();
 dotenv.config();
 
 // middlewares do express
-app.use(cors({ origin: ['http://localhost:3000', 'http://warrior-frontend.azurewebsites.com'] }))
+app.use(cors({ origin: ['http://localhost:3000', 'https://warrior-frontend.azurewebsites.net'] }))
 app.use(bodyParser.json({ limit: '5mb' }))
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 app.use(morgan('combined'));

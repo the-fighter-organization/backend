@@ -5,7 +5,7 @@ import AulaController from '../controllers/aulas';
 import HomeController from '../controllers/home';
 import TurmaController from '../controllers/turma';
 import UsuarioController from '../controllers/usuarios';
-import * as swaggerDocument from './swagger.json';
+import swaggerDocument from './swagger.json';
 import ConfiguracaoController from '../controllers/configuracoes';
 
 export default class ConfigConfig {

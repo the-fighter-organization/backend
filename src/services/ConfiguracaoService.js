@@ -1,6 +1,5 @@
-import * as express from "express";
-import { ConfiguracaoCRUDModel } from "../model/configuracoes/Configuracao";
-import { getUserIdFromRequest } from "../util/userModelShortcuts";
+import { ConfiguracaoCRUDModel } from '../model/configuracoes/Configuracao';
+import { getUserIdFromRequest } from '../util/userModelShortcuts';
 
 export default class ConfiguracaoService {
   async save(req, res) {
