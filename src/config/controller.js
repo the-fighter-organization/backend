@@ -1,5 +1,4 @@
-import * as express from 'express';
-import { serve, setup } from 'swagger-ui-express';
+import swagger from 'swagger-ui-express';
 
 import AlunoController from '../controllers/alunos';
 import AulaController from '../controllers/aulas';
@@ -10,9 +9,9 @@ import * as swaggerDocument from './swagger.json';
 import ConfiguracaoController from '../controllers/configuracoes';
 
 export default class ConfigConfig {
-    public static config(app: express.Express) {
+    static config(app) {
         app.use('/', HomeController.config())
-        app.use('/api-docs', serve, setup(swaggerDocument))
+        app.use('/api-docs', swagger.serve, swagger.setup(swaggerDocument))
         app.use('/usuarios', UsuarioController.config())
         app.use('/alunos', AlunoController.config())
         app.use('/configuracoes', ConfiguracaoController.config())

@@ -1,12 +1,8 @@
-import * as express from 'express';
-
 import { TurmaCRUDModel } from '../model/turmas/Turma';
 import { getUserIdFromRequest } from '../util/userModelShortcuts';
-import IEditService from './types/IEditService';
-import IReadOnlyService, { IBuscaParameters } from './types/IReadOnlyService';
 
-export default class TurmaService implements IReadOnlyService, IEditService {
-  async save(req: express.Request, res: express.Response) {
+export default class TurmaService {
+  async save(req, res) {
     // preenchendo model
     let model = new TurmaCRUDModel(req.body);
     model.usuario = getUserIdFromRequest(req);
@@ -29,7 +25,7 @@ export default class TurmaService implements IReadOnlyService, IEditService {
       }
 
       if (!model) {
-        return res.status(400).json({ message: "A alteração de turma resultou em erro" } as Error)
+        return res.status(400).json({ message: "A alteração de turma resultou em erro" })
       }
       return res.status(200).json(model);
     } catch (error) {
@@ -38,7 +34,7 @@ export default class TurmaService implements IReadOnlyService, IEditService {
   }
 
 
-  async remove(req: express.Request, res: express.Response) {
+  async remove(req, res) {
     if (!req.params.id) {
       return res.status(400);
     }
@@ -50,7 +46,7 @@ export default class TurmaService implements IReadOnlyService, IEditService {
     }
   }
 
-  async findAll(req: express.Request, res: express.Response) {
+  async findAll(req, res) {
     try {
       let results = await TurmaCRUDModel.find({ usuario: getUserIdFromRequest(req) })
       return res.status(200).json(results);
@@ -59,8 +55,8 @@ export default class TurmaService implements IReadOnlyService, IEditService {
     }
   }
 
-  async find(req: express.Request, res: express.Response) {
-    const { filters, select } = req.body as IBuscaParameters;
+  async find(req, res) {
+    const { filters, select } = req.body;
     try {
       let query = TurmaCRUDModel.find({ usuario: getUserIdFromRequest(req) })
 
@@ -86,7 +82,7 @@ export default class TurmaService implements IReadOnlyService, IEditService {
     }
   }
 
-  async findOne(req: express.Request, res: express.Response) {
+  async findOne(req, res) {
     try {
       let result = await TurmaCRUDModel
         .findOne({ _id: req.params.id, usuario: getUserIdFromRequest(req) });

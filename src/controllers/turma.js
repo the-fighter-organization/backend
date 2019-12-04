@@ -1,5 +1,5 @@
-import * as express from "express";
-import * as passport from 'passport'
+import express from "express";
+import passport from 'passport'
 import TurmaService from '../services/TurmaService';
 
 const router = express.Router();

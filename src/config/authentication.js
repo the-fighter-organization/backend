@@ -1,21 +1,22 @@
-import { Strategy } from "passport-http-bearer";
-import * as passport from "passport";
-import { UserCRUDModel, IUserLoginModel } from "../model/usuarios/Usuario";
-import * as jwt from "jsonwebtoken";
+import jwt from 'jsonwebtoken';
+import passport from 'passport';
+import passportHttpBearer from 'passport-http-bearer';
+
+import { UserCRUDModel } from '../model/usuarios/Usuario';
 
 export default class AuthConfig {
   static config() {
     passport.use(
-      new Strategy(async (token, cb) => {
+      new passportHttpBearer.Strategy(async (token, cb) => {
         try {
-          let decoded = jwt.verify(token, process.env.SECRET) as IUserLoginModel
+          let decoded = jwt.verify(token, process.env.SECRET)
 
           if (!decoded) {
             return cb(null, false);
           }
 
           let user = await UserCRUDModel
-            .findOne({ email: decoded.email } as IUserLoginModel);
+            .findOne({ email: decoded.email });
 
           if (user) {
             let { senha, ...response } = user

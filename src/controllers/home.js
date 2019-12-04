@@ -1,10 +1,10 @@
-import * as express from "express";
+import express from "express";
 
 const router = express.Router();
 
 export default class HomeController {
   static config() {
-    router.get("/", (req:express.Request, res: express.Response) => {
+    router.get("/", (req, res) => {
       res.send("Olá, você está na API do Warrior!")
     });
 

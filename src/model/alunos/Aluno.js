@@ -1,11 +1,9 @@
-import * as mongoose from 'mongoose';
+import mongoose from 'mongoose';
 import { USER_MODEL_NAME } from '../usuarios/Usuario';
-import './types'
-import { Alunos } from './types';
 
 export const ALUNO_MODEL_NAME = 'alunos';
 // Endereços
-const enderecoSchema = new mongoose.Schema<Alunos.Types.IEndereco>({
+const enderecoSchema = new mongoose.Schema({
   logradouro: {
     type: String,
     required: [true, 'O logradouro é obrigatório!'],
@@ -71,15 +69,15 @@ const responsavelSchema = new mongoose.Schema({
     maxlength: [15, 'O telefone deve ter no máximo 15 caracteres!']
   },
   nivelParentesco: {
-    type: Alunos.Types.NivelParentesco,
-    required: [true, 'O nível de parentesco é obrigatório!'],
-    enum: [
-      Alunos.Types.NivelParentesco.PAI,
-      Alunos.Types.NivelParentesco.MAE,
-      Alunos.Types.NivelParentesco.IRMAO,
-      Alunos.Types.NivelParentesco.OUTRO_FAMILIAR,
-      Alunos.Types.NivelParentesco.APENAS_RESPONSAVEL
-    ]
+    type: String,
+    required: [true, 'O nível de parentesco é obrigatório!']
+    // enum: [
+    //   Alunos.Types.NivelParentesco.PAI,
+    //   Alunos.Types.NivelParentesco.MAE,
+    //   Alunos.Types.NivelParentesco.IRMAO,
+    //   Alunos.Types.NivelParentesco.OUTRO_FAMILIAR,
+    //   Alunos.Types.NivelParentesco.APENAS_RESPONSAVEL
+    // ]
   },
   observacao: String
 });
@@ -155,7 +153,7 @@ const alunoCRUDSchema = new mongoose.Schema({
     // required: [true, 'A data de expedição é obrigatório!'],
   },
   sexo: {
-    type: Alunos.Types.Sexo,
+    type: String,
     required: [true, 'O sexo é obrigatório']
   },
   nacionalidade: {
@@ -178,7 +176,7 @@ const alunoCRUDSchema = new mongoose.Schema({
     maxlength: [20, 'O N° de filiação deve ter no máximo 20 caracteres']
   },
   situacaoCbj: {
-    type: Alunos.Types.SituacaoCBJ,
+    type: String,
     // required: [true, 'A situação da CBJ é obrigatória'],
   },
   // Filiação e responsáveis
@@ -202,7 +200,7 @@ const alunoCRUDSchema = new mongoose.Schema({
     maxlength: [80, 'A instituição de ensino deve ter no máximo 80 caracteres!']
   },
   periodo: {
-    type: Alunos.Types.PeriodoEnsino,
+    type: String,
   },
   ano: {
     type: String,
@@ -261,7 +259,7 @@ const alunoCRUDSchema = new mongoose.Schema({
 });
 
 //validando formas de pagamento
-alunoCRUDSchema.path("mensalidades").validate((mensalidades: Alunos.Types.IAlunoMensalidade[]) => {
+alunoCRUDSchema.path("mensalidades").validate((mensalidades) => {
   if (!mensalidades || !mensalidades.length) return true;
 
   const valido = mensalidades.map(mensalidade => {
@@ -272,7 +270,7 @@ alunoCRUDSchema.path("mensalidades").validate((mensalidades: Alunos.Types.IAluno
   return valido;
 }, "Cada mensalidade deve ter, pelo menos, uma forma de pagamento")
 
-export const AlunoCRUDModel = mongoose.model<Alunos.Types.IAlunoModel>(
+export const AlunoCRUDModel = mongoose.model(
   ALUNO_MODEL_NAME,
   alunoCRUDSchema,
   ALUNO_MODEL_NAME

@@ -1,14 +1,18 @@
-import * as bodyParser from 'body-parser';
-import * as express from 'express';
-import * as morgan from 'morgan';
-import * as cors from 'cors';
+import bodyParser from 'body-parser';
+import express from 'express';
+import morgan from 'morgan';
+import cors from 'cors';
 
 import DatabaseConfig from './config/database';
 import ControllerConfig from './config/controller';
 import AuthConfig from './config/authentication';
-require('dotenv').config();
+// require('dotenv').config();
+import dotenv from 'dotenv'
 
 const app = express();
+
+// configurando ambiente
+dotenv.config();
 
 // middlewares do express
 app.use(cors({ origin: ['http://localhost:3000', 'http://warrior-frontend.azurewebsites.com'] }))
@@ -22,7 +26,7 @@ ControllerConfig.config(app);
 
 // Configurações do db
 DatabaseConfig.config()
-require('mongoose').Promise = global.Promise
+// require('mongoose').Promise = global.Promise
 
 // Configurações de autenticação
 AuthConfig.config();

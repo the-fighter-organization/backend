@@ -1,11 +1,11 @@
-import * as express from "express";
+import express from "express";
 import UsuarioService from "../services/UsuarioService";
-import * as passport from 'passport'
+import passport from 'passport'
 
 const router = express.Router();
 const service = new UsuarioService();
 
-const secureRoute =  passport.authenticate('bearer', { session: false });
+const secureRoute = passport.authenticate('bearer', { session: false });
 
 export default class UsuarioController {
   static config() {
@@ -14,7 +14,7 @@ export default class UsuarioController {
     router.post("/editar-senha", service.editarSenha);
     router.get("/confirmar-perfil/:id/:codigoConfirmacao", service.confirmarPerfil);
     router.post("/authenticate", service.authenticate);
-    router.get("/current-user",secureRoute,service.findOne);
+    router.get("/current-user", secureRoute, service.findOne);
     router.delete("/current-user", secureRoute, service.remove);
 
     return router;

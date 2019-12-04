@@ -1,13 +1,8 @@
-import * as express from 'express';
-
 import { TurmaCRUDModel } from '../model/turmas/Turma';
-import { Turmas } from '../model/turmas/types';
 import { getUserIdFromRequest } from '../util/userModelShortcuts';
-import IEditService from './types/IEditService';
-import IReadOnlyService, { IBuscaParameters } from './types/IReadOnlyService';
 
-export default class AulaService implements IReadOnlyService, IEditService {
-  async save(req: express.Request, res: express.Response) {
+export default class AulaService {
+  async save(req, res) {
     try {
       // preenchendo model
       let model = await TurmaCRUDModel.findOne({ _id: req.params.turmaId, usuario: getUserIdFromRequest(req) })
@@ -42,7 +37,7 @@ export default class AulaService implements IReadOnlyService, IEditService {
       model = await model.save();
 
       if (!model) {
-        return res.status(400).json({ message: "A alteração do aluno resultou em erro" } as Error)
+        return res.status(400).json({ message: "A alteração do aluno resultou em erro" })
       }
 
       return res.status(200).json(model.aulas[indexAula]);
@@ -52,7 +47,7 @@ export default class AulaService implements IReadOnlyService, IEditService {
   }
 
 
-  async remove(req: express.Request, res: express.Response) {
+  async remove(req, res) {
     if (!req.params.id) {
       return res.status(400).json({ message: "Não foi possível excluir, o id não foi informado!" });
     }
@@ -86,12 +81,12 @@ export default class AulaService implements IReadOnlyService, IEditService {
     }
   }
 
-  async findAll(req: express.Request, res: express.Response) {
+  async findAll(req, res) {
     try {
       const results = await TurmaCRUDModel.find({ usuario: getUserIdFromRequest(req) });
       const aulas = results
         .map(turma => (
-          (turma.toObject() as Turmas.ITurmaModel).aulas.map(aula => ({ ...aula, turma: { nome: turma.nome, _id: turma._id } })))
+          (turma.toObject()).aulas.map(aula => ({ ...aula, turma: { nome: turma.nome, _id: turma._id } })))
         )
         .reduce((previus, current) => [...previus, ...current], []);
       return res.status(200).json(aulas);
@@ -100,8 +95,8 @@ export default class AulaService implements IReadOnlyService, IEditService {
     }
   }
 
-  async find(req: express.Request, res: express.Response) {
-    const { filters } = req.body as IBuscaParameters;
+  async find(req, res) {
+    const { filters } = req.body;
     try {
       let query = TurmaCRUDModel.find({ usuario: getUserIdFromRequest(req) })
 
@@ -116,7 +111,7 @@ export default class AulaService implements IReadOnlyService, IEditService {
 
       const results = await query.exec();
       const aulas = results.map(turma => (
-        (turma.toObject() as Turmas.ITurmaModel).aulas.map(aula => ({ ...aula, turma: { nome: turma.nome, _id: turma._id } })))
+        (turma.toObject()).aulas.map(aula => ({ ...aula, turma: { nome: turma.nome, _id: turma._id } })))
       ).reduce((previus, current) => [...previus, ...current], []);
 
       return res.status(200).json(aulas);
@@ -125,7 +120,7 @@ export default class AulaService implements IReadOnlyService, IEditService {
     }
   }
 
-  async findOne(req: express.Request, res: express.Response) {
+  async findOne(req, res) {
     try {
       const turma = await TurmaCRUDModel.findOne({ _id: req.params.turmaId, usuario: getUserIdFromRequest(req) })
 
@@ -133,7 +128,7 @@ export default class AulaService implements IReadOnlyService, IEditService {
         return res.status(404).json({ message: "A turma da aula solicitada não existe!" })
       }
 
-      let aula = (turma.aulas.find(q => q._id == req.params.id) as any).toObject();
+      let aula = (turma.aulas.find(q => q._id == req.params.id)).toObject();
       aula.turma = turma.toObject();
       aula.turmaId = turma._id;
 

@@ -1,17 +1,12 @@
-import * as express from 'express';
-
 import { AlunoCRUDModel } from '../model/alunos/Aluno';
-import { Alunos } from '../model/alunos/types';
-import { getUserIdFromRequest } from '../util/userModelShortcuts';
-import IEditService from './types/IEditService';
-import IReadOnlyService, { IBuscaParameters } from './types/IReadOnlyService';
 import { ConfiguracaoCRUDModel } from '../model/configuracoes/Configuracao';
 import { monthDiff } from '../util/date';
+import { getUserIdFromRequest } from '../util/userModelShortcuts';
 
-export default class AlunoService implements IReadOnlyService, IEditService {
-  async save(req: express.Request, res: express.Response) {
+export default class AlunoService {
+  async save(req, res) {
     // preenchendo model
-    const body: Alunos.Types.IAlunoModel = req.body;
+    const body = req.body;
     let model = new AlunoCRUDModel(body);
 
     model.usuario = getUserIdFromRequest(req);
@@ -40,7 +35,7 @@ export default class AlunoService implements IReadOnlyService, IEditService {
       }
 
       if (!model) {
-        return res.status(400).json({ message: "A alteração de usuário resultou em erro" } as Error)
+        return res.status(400).json({ message: "A alteração de usuário resultou em erro" })
       }
 
       return res.status(200).json(model);
@@ -49,7 +44,7 @@ export default class AlunoService implements IReadOnlyService, IEditService {
     }
   }
 
-  async remove(req: express.Request, res: express.Response) {
+  async remove(req, res) {
     if (!req.params.id) {
       return res.status(400);
     }
@@ -61,7 +56,7 @@ export default class AlunoService implements IReadOnlyService, IEditService {
     }
   }
 
-  async findAll(req: express.Request, res: express.Response) {
+  async findAll(req, res) {
     try {
       let results = await AlunoCRUDModel.find({ usuario: getUserIdFromRequest(req) })
       return res.status(200).json(results);
@@ -70,7 +65,7 @@ export default class AlunoService implements IReadOnlyService, IEditService {
     }
   }
 
-  async findAllMensalidadesVencidas(req: express.Request, res: express.Response) {
+  async findAllMensalidadesVencidas(req, res) {
     try {
       const configuracao = await ConfiguracaoCRUDModel.findOne({ usuario: getUserIdFromRequest(req) });
 
@@ -83,7 +78,7 @@ export default class AlunoService implements IReadOnlyService, IEditService {
           usuario: getUserIdFromRequest(req),
           inativo: false,
           bolsista: false
-        } as Alunos.Types.IAlunoModel)
+        })
         .select('_id nome ultimaAtivacao mensalidades');
 
       const alunosComMensalidadesVencidas = alunos.filter(aluno => {
@@ -114,8 +109,8 @@ export default class AlunoService implements IReadOnlyService, IEditService {
     }
   }
 
-  async find(req: express.Request, res: express.Response) {
-    const { filters, select } = req.body as IBuscaParameters;
+  async find(req, res) {
+    const { filters, select } = req.body;
     try {
       let query = AlunoCRUDModel.find({ usuario: getUserIdFromRequest(req) })
 
@@ -141,7 +136,7 @@ export default class AlunoService implements IReadOnlyService, IEditService {
     }
   }
 
-  async findOne(req: express.Request, res: express.Response) {
+  async findOne(req, res) {
     try {
       let result = await AlunoCRUDModel.findOne({ _id: req.params.id, usuario: getUserIdFromRequest(req) })
 

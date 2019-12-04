@@ -1,5 +1,5 @@
-import * as mongoose from 'mongoose'
-import { Turmas } from './types'
+import mongoose from 'mongoose';
+
 import { ALUNO_MODEL_NAME } from '../alunos/Aluno';
 import { USER_MODEL_NAME } from '../usuarios/Usuario';
 
@@ -20,7 +20,7 @@ const AlunoPresencaSchema = new mongoose.Schema({
   nota: Number
 })
 
-const AulaSchema = new mongoose.Schema<Turmas.IAulaModel>({
+const AulaSchema = new mongoose.Schema({
   dataRegistro: { type: Date, required: true },
   dataAula: { type: Date, required: true },
   dataChamada: { type: Date },
@@ -28,7 +28,7 @@ const AulaSchema = new mongoose.Schema<Turmas.IAulaModel>({
   planoAula: [String]
 });
 
-const TurmaSchema = new mongoose.Schema<Turmas.ITurmaModel>({
+const TurmaSchema = new mongoose.Schema({
   nome: {
     type: String,
     required: true
@@ -60,7 +60,7 @@ const TurmaSchema = new mongoose.Schema<Turmas.ITurmaModel>({
   }
 })
 
-export const TurmaCRUDModel = mongoose.model<Turmas.ITurmaModel>(
+export const TurmaCRUDModel = mongoose.model(
   TURMA_MODEL_NAME,
   TurmaSchema,
   TURMA_MODEL_NAME

@@ -1,8 +1,5 @@
-import * as mongoose from 'mongoose';
-import './types'
-import { Configuracoes } from './types';
+import mongoose from 'mongoose';
 import { USER_MODEL_NAME } from '../usuarios/Usuario';
-
 export const CONFIGURACAO_MODEL_NAME = 'configuracoes';
 
 const configuracaoCRUDSchema = new mongoose.Schema({
@@ -22,7 +19,7 @@ const configuracaoCRUDSchema = new mongoose.Schema({
   }
 });
 
-export const ConfiguracaoCRUDModel = mongoose.model<Configuracoes.Types.IConfiguracao>(
+export const ConfiguracaoCRUDModel = mongoose.modelNames(
   CONFIGURACAO_MODEL_NAME,
   configuracaoCRUDSchema,
   CONFIGURACAO_MODEL_NAME

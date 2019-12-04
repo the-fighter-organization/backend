@@ -4,11 +4,9 @@
   "description": "Backend do projeto the-fighter",
   "main": "index.ts",
   "scripts": {
-    "build": "tsc -w",
-    "dev": "nodemon dist/index.js",
-    "prestart": "tsc -p .",
-    "start": "node dist/index.js",
-    "test": "mocha dist/test/**/*.js"
+    "dev": "nodemon --experimental-modules --es-module-specifier-resolution=node src/index.js",
+    "start": "node --experimental-modules --es-module-specifier-resolution=node src/index.js",
+    "test": "mocha src/test/**/*.js"
   },
   "author": "Igor Bueno",
   "license": "ISC",
@@ -30,11 +28,7 @@
     "chai": "^4.2.0",
     "mocha": "^6.1.4",
     "request": "^2.88.0",
-    "should": "^13.2.3",
-    "typescript": "^3.3.3333"
-  },
-  "engines": {
-    "node": "10.X"
+    "should": "^13.2.3"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
@@ -50,5 +44,6 @@
     "passport-http-bearer": "^1.0.1",
     "swagger-ui-express": "^4.0.7",
     "yamljs": "^0.3.0"
-  }
+  },
+  "type": "module"
 }

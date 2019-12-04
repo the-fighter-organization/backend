@@ -3,7 +3,7 @@ import { ConfiguracaoCRUDModel } from "../model/configuracoes/Configuracao";
 import { getUserIdFromRequest } from "../util/userModelShortcuts";
 
 export default class ConfiguracaoService {
-  async save(req: express.Request, res: express.Response) {
+  async save(req, res) {
     // preenchendo model
     let model = new ConfiguracaoCRUDModel(req.body);
     model.usuario = getUserIdFromRequest(req);
@@ -28,7 +28,7 @@ export default class ConfiguracaoService {
       }
 
       if (!model) {
-        return res.status(400).json({ message: "A alteração de usuário resultou em erro" } as Error)
+        return res.status(400).json({ message: "A alteração de usuário resultou em erro" })
       }
       return res.status(200).json(model);
     } catch (error) {
@@ -36,7 +36,7 @@ export default class ConfiguracaoService {
     }
   }
 
-  async findOne(req: express.Request, res: express.Response) {
+  async findOne(req, res) {
     try {
       let result = await ConfiguracaoCRUDModel.findOne({ usuario: getUserIdFromRequest(req) })
 

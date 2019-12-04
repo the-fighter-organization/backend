@@ -1,57 +1,5 @@
-import * as mongoose from "mongoose";
+import mongoose from "mongoose";
 import * as jwt from "jsonwebtoken";
-
-export interface IUserModel extends mongoose.Document {
-  nome?: string;
-  sobrenome?: string;
-  email: string;
-  senha: string;
-  senhaAConfirmar: string;
-  logoEmpresa?: string;
-  codigoConfirmacao?: string;
-}
-
-export interface IUserNovoModel extends mongoose.Document {
-  nome?: string;
-  sobrenome?: string;
-  email: string;
-  senha: string;
-  logoEmpresa?: string;
-  codigoConfirmacao?: string;
-}
-
-export interface IUserLoginModel extends mongoose.Document {
-  email: string;
-  senha: string;
-  authenticate: (usuario?: string, senha?: string) => Promise<
-    IUserAuthenticationResponse
-  >;
-}
-
-export interface IUserEditarPerfilModel extends mongoose.Document {
-  nome: string;
-  sobrenome?: string;
-  email: string;
-  logoEmpresa?: string;
-}
-
-export interface IUserEditarSenhaModel extends mongoose.Document {
-  email: string
-  senha: string
-  confirmacaoSenha: string
-}
-
-export interface IUserInfo {
-  nome: string;
-  sobrenome: string;
-  email: string;
-}
-
-export interface IUserAuthenticationResponse {
-  token: string;
-  userInfo: IUserInfo;
-  error?: string
-}
 
 export const USER_MODEL_NAME = "usuarios";
 export const USER_MODEL_LOGIN_NAME = "UsuarioLogin";
@@ -169,12 +117,10 @@ const userEditarSenhaSchema = new mongoose.Schema({
   }
 });
 
-userLoginSchema.methods.authenticate = async (email?: string, senha?: string): Promise<
-  IUserAuthenticationResponse
-> => {
+userLoginSchema.methods.authenticate = async (email, senha) => {
   try {
     const user = await UserCRUDModel
-      .findOne({ email, senha } as IUserModel);
+      .findOne({ email, senha });
 
     if (!user) {
       return null;
@@ -198,37 +144,37 @@ userLoginSchema.methods.authenticate = async (email?: string, senha?: string): P
       }
     );
 
-    return { token, userInfo: { email: user.email, nome: user.nome, sobrenome: user.sobrenome } } as IUserAuthenticationResponse;
+    return { token, userInfo: { email: user.email, nome: user.nome, sobrenome: user.sobrenome } };
   } catch (error) {
     throw error
   }
 };
 
-export const UserCRUDModel = mongoose.model<IUserModel>(
+export const UserCRUDModel = mongoose.model(
   USER_MODEL_NAME,
   userCRUDSchema,
   USER_MODEL_NAME
 );
 
-export const UserNovoModel = mongoose.model<IUserNovoModel>(
+export const UserNovoModel = mongoose.model(
   USER_MODEL_NOVO_NAME,
   userNovoSchema,
   USER_MODEL_NAME
 );
 
-export const UserLoginModel = mongoose.model<IUserLoginModel>(
+export const UserLoginModel = mongoose.model(
   USER_MODEL_LOGIN_NAME,
   userLoginSchema,
   USER_MODEL_NAME
 );
 
-export const UserEditarPerfilModel = mongoose.model<IUserEditarPerfilModel>(
+export const UserEditarPerfilModel = mongoose.model(
   USER_MODEL_EDITAR_PERFIL_NAME,
   userEditarPerfilSchema,
   USER_MODEL_NAME
 );
 
-export const UserEditarSenhaModel = mongoose.model<IUserEditarSenhaModel>(
+export const UserEditarSenhaModel = mongoose.model(
   USER_MODEL_EDITAR_SENHA_NAME,
   userEditarSenhaSchema,
   USER_MODEL_NAME

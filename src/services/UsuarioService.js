@@ -1,12 +1,19 @@
-import * as express from "express";
-import { UserCRUDModel as UserCRUDModel, UserLoginModel, UserEditarPerfilModel, UserEditarSenhaModel, UserNovoModel } from '../model/usuarios/Usuario';
-const CryptoJS = require("crypto-js");
-import { getUserIdFromRequest } from "../util/userModelShortcuts";
-import { uuidv4 } from "../util/GUID";
-import { createTransport } from 'nodemailer';
+import * as nodemailer from 'nodemailer';
+
+import {
+  UserCRUDModel as UserCRUDModel,
+  UserEditarPerfilModel,
+  UserEditarSenhaModel,
+  UserLoginModel,
+  UserNovoModel,
+} from '../model/usuarios/Usuario';
+import { uuidv4 } from '../util/GUID';
+import { getUserIdFromRequest } from '../util/userModelShortcuts';
+
+import CryptoJS from "crypto-js";
 
 export default class UsuarioService {
-  async novo(req: express.Request, res: express.Response) {
+  async novo(req, res) {
     const { _id, ...body } = req.body;
 
     let model = new UserNovoModel(body);
@@ -26,7 +33,7 @@ export default class UsuarioService {
         throw new Error('Usuário não criado!')
       }
 
-      var transporter = createTransport({
+      var transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
           user: process.env.ENVIO_EMAIL_CONTA,
@@ -66,7 +73,7 @@ export default class UsuarioService {
     }
   }
 
-  async editarSenha(req: express.Request, res: express.Response) {
+  async editarSenha(req, res) {
     let body = new UserEditarSenhaModel(req.body);
     let validation = body.validateSync();
 
@@ -93,7 +100,7 @@ export default class UsuarioService {
         throw 'Usuário não encontrado!'
       }
 
-      var transporter = createTransport({
+      var transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
           user: process.env.ENVIO_EMAIL_CONTA,
@@ -119,7 +126,7 @@ export default class UsuarioService {
     }
   }
 
-  async editarPerfil(req: express.Request, res: express.Response) {
+  async editarPerfil(req, res) {
     let model = new UserEditarPerfilModel({ ...req.body, _id: getUserIdFromRequest(req) });
     let validation = model.validateSync();
 
@@ -143,7 +150,7 @@ export default class UsuarioService {
     }
   }
 
-  async confirmarPerfil(req: express.Request, res: express.Response) {
+  async confirmarPerfil(req, res) {
     try {
       const { id, codigoConfirmacao } = req.params;
       let obj = await UserCRUDModel.findOne({ _id: id, codigoConfirmacao });
@@ -169,7 +176,7 @@ export default class UsuarioService {
     }
   }
 
-  async authenticate(req: express.Request, res: express.Response) {
+  async authenticate(req, res) {
     let model = new UserLoginModel(req.body);
     let validation = model.validateSync();
 
@@ -191,7 +198,7 @@ export default class UsuarioService {
     }
   }
 
-  async remove(req: express.Request, res: express.Response) {
+  async remove(req, res) {
     try {
       let model = await UserCRUDModel
         .findOneAndRemove({ _id: getUserIdFromRequest(req) })
@@ -203,7 +210,7 @@ export default class UsuarioService {
     }
   }
 
-  async findOne(req: express.Request, res: express.Response) {
+  async findOne(req, res) {
     try {
       let result = await UserCRUDModel
         .findOne({ _id: getUserIdFromRequest(req) })

@@ -1,7 +1,7 @@
-import * as mongoose from 'mongoose';
+import mongoose from 'mongoose';
 
 export default class DatabaseConfig {
-    public static config() {
+    static config() {
         mongoose
             .connect(process.env.STRING_URL,
                 {
