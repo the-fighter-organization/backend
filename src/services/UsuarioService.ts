@@ -1,11 +1,9 @@
 import * as express from "express";
 import { UserCRUDModel as UserCRUDModel, UserLoginModel, UserEditarPerfilModel, UserEditarSenhaModel, UserNovoModel } from '../model/usuarios/Usuario';
 const CryptoJS = require("crypto-js");
-import { passwordHash } from '../config/secrets.json'
 import { getUserIdFromRequest } from "../util/userModelShortcuts";
 import { uuidv4 } from "../util/GUID";
 import { createTransport } from 'nodemailer';
-import { envioEmail } from '../config/secrets.json'
 
 export default class UsuarioService {
   async novo(req: express.Request, res: express.Response) {
@@ -18,7 +16,7 @@ export default class UsuarioService {
       return res.status(400).json({ validation });
     }
 
-    model.senha = CryptoJS.HmacSHA1(model.senha, passwordHash).toString()
+    model.senha = CryptoJS.HmacSHA1(model.senha, process.env.PASSWORD_HASH).toString()
     model.codigoConfirmacao = uuidv4();
 
     try {
@@ -31,15 +29,15 @@ export default class UsuarioService {
       var transporter = createTransport({
         service: 'gmail',
         auth: {
-          user: envioEmail.email,
-          pass: envioEmail.senha
+          user: process.env.ENVIO_EMAIL_CONTA,
+          pass: process.env.ENVIO_EMAIL_SENHA
         }
       });
 
       const link = `${req.body.linkConfirmacao}/${model._id}/${model.codigoConfirmacao}`
 
       var mailOptions = {
-        from: envioEmail.email,
+        from: process.env.ENVIO_EMAIL_CONTA,
         to: model.email,
         subject: 'Criação de conta - Warrior',
         html: `<span>Clique nesse link para confirmar a criação da sua conta: <a href="${link}">${link}</a></span>`
@@ -80,7 +78,7 @@ export default class UsuarioService {
       return res.status(400).json({ error: 'A confirmação de senha está diferente da senha!' })
     }
 
-    body.senha = CryptoJS.HmacSHA1(body.senha, passwordHash).toString()
+    body.senha = CryptoJS.HmacSHA1(body.senha, process.env.PASSWORD_HASH).toString()
 
     let model = await UserCRUDModel.findOne({ email: body.email });
     model.codigoConfirmacao = uuidv4();
@@ -98,15 +96,15 @@ export default class UsuarioService {
       var transporter = createTransport({
         service: 'gmail',
         auth: {
-          user: envioEmail.email,
-          pass: envioEmail.senha
+          user: process.env.ENVIO_EMAIL_CONTA,
+          pass: process.env.ENVIO_EMAIL_SENHA
         }
       });
 
       const link = `${req.body.linkConfirmacao}/${model._id}/${model.codigoConfirmacao}`
 
       var mailOptions = {
-        from: envioEmail.email,
+        from: process.env.ENVIO_EMAIL_CONTA,
         to: model.email,
         subject: 'Alteração de senha - Warrior',
         html: `<span>Clique nesse link para confirmar sua alteração de senha: <a href="${link}">${link}</a></span>`
@@ -180,7 +178,7 @@ export default class UsuarioService {
     }
 
     try {
-      let senha = CryptoJS.HmacSHA1(model.senha, passwordHash)
+      let senha = CryptoJS.HmacSHA1(model.senha, process.env.PASSWORD_HASH)
       let response = await model.authenticate(model.email, senha.toString())
 
       if (!response) {

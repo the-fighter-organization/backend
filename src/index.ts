@@ -6,13 +6,14 @@ import * as cors from 'cors';
 import DatabaseConfig from './config/database';
 import ControllerConfig from './config/controller';
 import AuthConfig from './config/authentication';
+require('dotenv').config();
 
 const app = express();
 
 // middlewares do express
-app.use(cors({origin:['http://localhost:3000', 'http://warrior-frontend.appspot.com']}))
-app.use(bodyParser.json({limit : '5mb'}))
-app.use(bodyParser.urlencoded({extended:true, limit : '50mb'}));
+app.use(cors({ origin: ['http://localhost:3000', 'http://warrior-frontend.azurewebsites.com'] }))
+app.use(bodyParser.json({ limit: '5mb' }))
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 app.use(morgan('combined'));
 
 

@@ -2,14 +2,13 @@ import { Strategy } from "passport-http-bearer";
 import * as passport from "passport";
 import { UserCRUDModel, IUserLoginModel } from "../model/usuarios/Usuario";
 import * as jwt from "jsonwebtoken";
-import { secret } from './secrets.json'
 
 export default class AuthConfig {
   static config() {
     passport.use(
       new Strategy(async (token, cb) => {
         try {
-          let decoded = jwt.verify(token, secret) as IUserLoginModel
+          let decoded = jwt.verify(token, process.env.SECRET) as IUserLoginModel
 
           if (!decoded) {
             return cb(null, false);

@@ -1,6 +1,5 @@
 import * as mongoose from "mongoose";
 import * as jwt from "jsonwebtoken";
-import { secret } from "../../config/secrets.json";
 
 export interface IUserModel extends mongoose.Document {
   nome?: string;
@@ -193,7 +192,7 @@ userLoginSchema.methods.authenticate = async (email?: string, senha?: string): P
         _id: user._id,
         generatedDate: new Date()
       },
-      secret,
+      process.env.SECRET,
       {
         expiresIn: '2h'
       }
