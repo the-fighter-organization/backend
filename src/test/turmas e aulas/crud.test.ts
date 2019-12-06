@@ -7,27 +7,27 @@ const CONTROLLER = "turmas";
 let token = null;
 let idTurma = null;
 
-describe("#Login", () => {
-  it("Fazendo login de usuário (Login correto)", done => {
-    let objLogin = { email: "teste@teste.com", senha: "123" };
+describe("# CRUD de turma", () => {
+  describe("## Login", () => {
+    it("Fazendo login de usuário (Login correto)", done => {
+      let objLogin = { email: "teste@teste.com", senha: "123" };
+  
+      request.post(
+        {
+          url: `${TEST_BASE_URL}/usuarios/authenticate`,
+          form: objLogin
+        }, function (err, httpResponse, body) {
+          if (err) {
+            done(err)
+          }
+  
+          expect(httpResponse.statusCode, "Login deu certo?").to.equal(200)
+          token = JSON.parse(body).token
+          done()
+        })
+    })
+  });
 
-    request.post(
-      {
-        url: `${TEST_BASE_URL}/usuarios/authenticate`,
-        form: objLogin
-      }, function (err, httpResponse, body) {
-        if (err) {
-          done(err)
-        }
-
-        expect(httpResponse.statusCode, "Login deu certo?").to.equal(200)
-        token = JSON.parse(body).token
-        done()
-      })
-  })
-})
-
-describe("CRUD de turma", () => {
   let objTeste = {
     "inativo": false,
     "aulas": [],
@@ -38,7 +38,7 @@ describe("CRUD de turma", () => {
   }
 
 
-  describe("#Inserindo", () => {
+  describe("## Inserindo", () => {
     it("Inserindo o turma", done => {
       request.post(
         {
@@ -59,7 +59,7 @@ describe("CRUD de turma", () => {
     })
   })
 
-  describe("#Alterando", () => {
+  describe("## Alterando", () => {
     it("Alterando o turma", done => {
       request.post(
         {
@@ -78,7 +78,7 @@ describe("CRUD de turma", () => {
     })
   })
 
-  describe("#Listando", () => {
+  describe("## Listando", () => {
     it("Gerando listagem de turma", done => {
 
       request.get(
@@ -94,14 +94,11 @@ describe("CRUD de turma", () => {
 
           expect(httpResponse.statusCode, "Listou corretamente?").to.equal(200)
           done()
-          let lista = JSON.parse(body) as Turmas.ITurmaModel[];
-
-          console.log(lista.map(item => item.nome).join(","))
         })
     })
   })
 
-  describe("#Removendo", () => {
+  describe("## Removendo", () => {
     it("Removendo o turma", done => {
       request.delete(
         {

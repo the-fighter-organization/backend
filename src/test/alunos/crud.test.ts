@@ -7,27 +7,28 @@ const CONTROLLER = "alunos";
 let token = null;
 let idAluno = null;
 
-describe("#Login", () => {
-  it("Fazendo login de usuário (Login correto)", done => {
-    let objLogin = { email: "teste@teste.com", senha: "123" };
 
-    request.post(
-      {
-        url: `${TEST_BASE_URL}/usuarios/authenticate`,
-        form: objLogin
-      }, function (err, httpResponse, body) {
-        if (err) {
-          done(err)
-        }
+describe("# CRUD de aluno", () => {
+  describe("## Login para obter o token de acesso", () => {
+    it("Fazendo login de usuário (Login correto)", done => {
+      let objLogin = { email: "teste@teste.com", senha: "123" };
+  
+      request.post(
+        {
+          url: `${TEST_BASE_URL}/usuarios/authenticate`,
+          form: objLogin
+        }, function (err, httpResponse, body) {
+          if (err) {
+            done(err)
+          }
+  
+          expect(httpResponse.statusCode, "Login deu certo?").to.equal(200)
+          token = JSON.parse(body).token
+          done()
+        })
+    })
+  });
 
-        expect(httpResponse.statusCode, "Login deu certo?").to.equal(200)
-        token = JSON.parse(body).token
-        done()
-      })
-  })
-})
-
-describe("CRUD de aluno", () => {
   let objTeste = {
     "inativo": false,
     "nacionalidade": "Brasil",
@@ -62,7 +63,7 @@ describe("CRUD de aluno", () => {
   };
 
 
-  describe("#Inserindo", () => {
+  describe("## Inserindo", () => {
     it("Inserindo o aluno", done => {
       request.post(
         {
@@ -83,7 +84,7 @@ describe("CRUD de aluno", () => {
     })
   })
 
-  describe("#Alterando", () => {
+  describe("## Alterando", () => {
     it("Alterando o aluno", done => {
       request.post(
         {
@@ -102,7 +103,7 @@ describe("CRUD de aluno", () => {
     })
   })
 
-  describe("#Listando", () => {
+  describe("## Listando", () => {
     it("Gerando listagem de aluno", done => {
 
       request.get(
@@ -118,14 +119,11 @@ describe("CRUD de aluno", () => {
 
           expect(httpResponse.statusCode, "Listou corretamente?").to.equal(200)
           done()
-          let lista = JSON.parse(body) as Alunos.Types.IAlunoModel[];
-
-          console.log(lista.map(item => item.nome).join(","))
         })
     })
   })
 
-  describe("#Removendo", () => {
+  describe("## Removendo", () => {
     it("Removendo o aluno", done => {
       request.delete(
         {
