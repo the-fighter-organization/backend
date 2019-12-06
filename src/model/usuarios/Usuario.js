@@ -127,7 +127,7 @@ userLoginSchema.methods.authenticate = async (email, senha) => {
     }
 
     if (user.codigoConfirmacao && !user.senhaAConfirmar) {
-      return { token: null, userInfo: null, error: "Para fazer login é necessário confirmar a criação da sua conta!" };
+      return { token: null, userInfo: null, faltaConfirmarSenha:true };
     }
 
     const token = jwt.sign(

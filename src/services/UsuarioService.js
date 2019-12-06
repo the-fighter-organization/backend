@@ -194,6 +194,10 @@ export default class UsuarioService {
         return res.status(401).json({ message: "Usuário ou senha incorretos!" })
       }
 
+      if(response.faltaConfirmarSenha){
+        return res.status(4001).json({message: "Não é possível fazer login enquanto não confirmar a conta por e-mail."})
+      }
+
       return res.status(200).json(response);
     } catch (error) {
       return res.status(500).json(error)
