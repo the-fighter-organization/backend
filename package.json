@@ -26,6 +26,7 @@
     "@types/swagger-ui-express": "^3.0.1",
     "@types/yamljs": "^0.2.30",
     "chai": "^4.2.0",
+    "eslint": "^6.7.2",
     "mocha": "^6.1.4",
     "request": "^2.88.0",
     "should": "^13.2.3"

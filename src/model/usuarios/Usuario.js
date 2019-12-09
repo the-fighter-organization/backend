@@ -126,9 +126,9 @@ userLoginSchema.methods.authenticate = async (email, senha) => {
       return null;
     }
 
-    if (user.codigoConfirmacao && !user.senhaAConfirmar) {
-      return { token: null, userInfo: null, faltaConfirmarSenha:true };
-    }
+    // if (user.codigoConfirmacao && !user.senhaAConfirmar) {
+    //   return { token: null, userInfo: null, faltaConfirmarSenha:true };
+    // }
 
     const token = jwt.sign(
       {

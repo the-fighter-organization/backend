@@ -10,8 +10,8 @@ const secureRoute = passport.authenticate('bearer', { session: false })
 
 export default class ConfiguracaoController {
   static config() {
-    router.post("/", secureRoute, service.save);
     router.get("/", secureRoute, service.findOne);
+    router.post("/", secureRoute, service.save);
     return router;
   }
 }

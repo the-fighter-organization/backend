@@ -40,7 +40,7 @@ export default class AulaService {
         return res.status(400).json({ message: "A alteração do aluno resultou em erro" })
       }
 
-      return res.status(200).json(model.aulas[indexAula]);
+      return res.status(200).json(model.aulas[indexAula] || {});
     } catch (error) {
       return res.status(500).json(error);
     }

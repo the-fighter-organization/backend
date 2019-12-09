@@ -13,57 +13,57 @@ import HmacSHA1 from "crypto-js/hmac-sha1";
 
 export default class UsuarioService {
   async novo(req, res) {
-    try {
       const { _id, ...body } = req.body;
 
-      let model = new UserNovoModel(body);
-      let validation = model.validateSync();
+      var model = new UserNovoModel(body);
+      const validation = model.validateSync();
+    try {
 
       if (validation) {
         return res.status(400).json({ validation });
       }
 
       model.senha = HmacSHA1(model.senha, process.env.PASSWORD_HASH).toString()
-      model.codigoConfirmacao = uuidv4();
+      // model.codigoConfirmacao = uuidv4();
 
       model = await model.save();
 
-      if (model === null) {
+      if (!model) {
         throw new Error('Usuário não criado!')
       }
 
-      var transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: process.env.ENVIO_EMAIL_CONTA,
-          pass: process.env.ENVIO_EMAIL_SENHA
-        }
-      });
+      // var transporter = nodemailer.createTransport({
+      //   service: 'gmail',
+      //   auth: {
+      //     user: process.env.ENVIO_EMAIL_CONTA,
+      //     pass: process.env.ENVIO_EMAIL_SENHA
+      //   }
+      // });
 
-      const link = `${req.body.linkConfirmacao}/${model._id}/${model.codigoConfirmacao}`
+      // const link = `${req.body.linkConfirmacao}/${model._id}/${model.codigoConfirmacao}`
 
-      var mailOptions = {
-        from: process.env.ENVIO_EMAIL_CONTA,
-        to: model.email,
-        subject: 'Criação de conta - Warrior',
-        html: `<span>Clique nesse link para confirmar a criação da sua conta: <a href="${link}">${link}</a></span>`
-      };
+      // var mailOptions = {
+      //   from: process.env.ENVIO_EMAIL_CONTA,
+      //   to: model.email,
+      //   subject: 'Criação de conta - Warrior',
+      //   html: `<span>Clique nesse link para confirmar a criação da sua conta: <a href="${link}">${link}</a></span>`
+      // };
 
-      const emailResponse = await transporter.sendMail(mailOptions);
+      // const emailResponse = await transporter.sendMail(mailOptions);
 
       const { senha, senhaAConfirmar, logoEmpresa, codigoConfirmacao, ...response } = model.toObject();
 
-      return res.status(200).json({ response, emailResponse });
+      return res.status(200).json({ response });
 
     } catch (error) {
       if (!error) {
         return res.status(500).json("Ocorreu um erro interno no servidor");
       }
       // validando erros
-      if (error.code === 11000) {
+      if (error && error.code === 11000) {
         return res.status(400).json({ error: "Este e-mail já está sendo usado por outra conta!" })
       }
-      if (error.code === "ESOCKET" && error.errno === "ETIMEDOUT") {
+      if (error && error.code === "ESOCKET" && error.errno === "ETIMEDOUT") {
         await UserCRUDModel.findOneAndRemove({ _id: model._id })
         return res.status(500).json({ error: "Não foi possível enviar o e-mail ao usuário. A operação foi cancelada!" })
       }
@@ -88,8 +88,8 @@ export default class UsuarioService {
       body.senha = HmacSHA1(body.senha, process.env.PASSWORD_HASH).toString()
 
       let model = await UserCRUDModel.findOne({ email: body.email });
-      model.codigoConfirmacao = uuidv4();
-      model.senhaAConfirmar = body.senha;
+      // model.codigoConfirmacao = uuidv4();
+      // model.senhaAConfirmar = body.senha;
 
       model = await UserCRUDModel
         .findOneAndUpdate({ _id: model._id }, model, { new: true })
@@ -99,26 +99,26 @@ export default class UsuarioService {
         throw 'Usuário não encontrado!'
       }
 
-      var transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: process.env.ENVIO_EMAIL_CONTA,
-          pass: process.env.ENVIO_EMAIL_SENHA
-        }
-      });
+      // var transporter = nodemailer.createTransport({
+      //   service: 'gmail',
+      //   auth: {
+      //     user: process.env.ENVIO_EMAIL_CONTA,
+      //     pass: process.env.ENVIO_EMAIL_SENHA
+      //   }
+      // });
 
-      const link = `${req.body.linkConfirmacao}/${model._id}/${model.codigoConfirmacao}`
+      // const link = `${req.body.linkConfirmacao}/${model._id}/${model.codigoConfirmacao}`
 
-      var mailOptions = {
-        from: process.env.ENVIO_EMAIL_CONTA,
-        to: model.email,
-        subject: 'Alteração de senha - Warrior',
-        html: `<span>Clique nesse link para confirmar sua alteração de senha: <a href="${link}">${link}</a></span>`
-      };
+      // var mailOptions = {
+      //   from: process.env.ENVIO_EMAIL_CONTA,
+      //   to: model.email,
+      //   subject: 'Alteração de senha - Warrior',
+      //   html: `<span>Clique nesse link para confirmar sua alteração de senha: <a href="${link}">${link}</a></span>`
+      // };
 
-      const emailResponse = await transporter.sendMail(mailOptions);
+      // const emailResponse = await transporter.sendMail(mailOptions);
 
-      return res.status(200).json({ model, emailResponse });
+      return res.status(200).json({ model });
 
     } catch (error) {
       return res.status(500).json({ error });
@@ -179,7 +179,6 @@ export default class UsuarioService {
     try {
       debugger
 
-      console.log("Antes de criar a model")
       let model = new UserLoginModel(req.body);
       let validation = model.validateSync();
 
@@ -194,9 +193,9 @@ export default class UsuarioService {
         return res.status(401).json({ message: "Usuário ou senha incorretos!" })
       }
 
-      if(response.faltaConfirmarSenha){
-        return res.status(4001).json({message: "Não é possível fazer login enquanto não confirmar a conta por e-mail."})
-      }
+      // if(response.faltaConfirmarSenha){
+      //   return res.status(401).json({message: "Não é possível fazer login enquanto não confirmar a conta por e-mail."})
+      // }
 
       return res.status(200).json(response);
     } catch (error) {

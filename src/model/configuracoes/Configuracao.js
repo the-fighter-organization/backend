@@ -19,7 +19,7 @@ const configuracaoCRUDSchema = new mongoose.Schema({
   }
 });
 
-export const ConfiguracaoCRUDModel = mongoose.modelNames(
+export const ConfiguracaoCRUDModel = mongoose.model(
   CONFIGURACAO_MODEL_NAME,
   configuracaoCRUDSchema,
   CONFIGURACAO_MODEL_NAME

@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/9e32ad70-d91c-49dc-9b98-501c56f6e471/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/warrior-backend",
+    "appService.deploySubpath": ""
+}

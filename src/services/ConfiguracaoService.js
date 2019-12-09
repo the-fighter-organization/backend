@@ -42,7 +42,7 @@ export default class ConfiguracaoService {
       if (result) {
         return res.status(200).json(result)
       } else {
-        return res.status(404);
+        return res.status(204).json({message:"Nenhuma configuração foi encontrado!"});
       }
     } catch (error) {
       return res.status(500).json(error)
